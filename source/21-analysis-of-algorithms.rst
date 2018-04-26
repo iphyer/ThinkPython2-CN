@@ -1,71 +1,53 @@
-Analysis of Algorithms
-======================
+第二十一章：算法分析
+==================================
 
-    This appendix is an edited excerpt from *Think Complexity*, by Allen
-    B. Downey, also published by O’Reilly Media (2012). When you are
-    done with this book, you might want to move on to that one.
+    本附录摘自 Allen B. Downey 的 *Think Complexity* 一书 ， 也由 O’Reilly
+    Media (2011)出版。 当你读完本书后，也许你可以接着读读那本书。
 
-**Analysis of algorithms** is a branch of computer science that studies
-the performance of algorithms, especially their run time and space
-requirements. See http://en.wikipedia.org/wiki/Analysis_of_algorithms.
 
-The practical goal of algorithm analysis is to predict the performance
-of different algorithms in order to guide design decisions.
+*算法分析* (**Analysis of algorithms**) 是计算机科学的一个分支，
+着重研究算法的性能， 特别是它们的运行时间和资源开销。见 http://en.wikipedia.org/wiki/Analysis_of_algorithms 。
 
-During the 2008 United States Presidential Campaign, candidate Barack
-Obama was asked to perform an impromptu analysis when he visited Google.
-Chief executive Eric Schmidt jokingly asked him for “the most efficient
-way to sort a million 32-bit integers.” Obama had apparently been tipped
-off, because he quickly replied, “I think the bubble sort would be the
-wrong way to go.” See http://www.youtube.com/watch?v=k4RRi_ntQc8.
+算法分析的实际目的是预测不同算法的性能，用于指导设计决策。
 
-This is true: bubble sort is conceptually simple but slow for large
-datasets. The answer Schmidt was probably looking for is “radix sort”
-(http://en.wikipedia.org/wiki/Radix_sort) [2]_.
+2008年美国总统大选期间，当候选人奥巴马(Barack Obama)访问Google时，
+他被要求进行即时分析。首席执行官 Eric Schmidt 开玩笑地问他“对一百万个32位整数排序的最有效的方法”。
+显然有人暗中通知了奥巴马，因为他很快回答，“我认为不应该采用冒泡排序法”。
+详见 http://www.youtube.com/watch?v=k4RRi_ntQc8 。
 
-The goal of algorithm analysis is to make meaningful comparisons between
-algorithms, but there are some problems:
+是真的：冒泡排序概念上很简单，但是对于大数据集来说速度非常慢。Schmidt所提问题的答案可能是 “基数排序 (http://en.wikipedia.org/wiki/Radix_sort)” [1]_。
 
--  The relative performance of the algorithms might depend on
-   characteristics of the hardware, so one algorithm might be faster on
-   Machine A, another on Machine B. The general solution to this problem
-   is to specify a **machine model** and analyze the number of steps, or
-   operations, an algorithm requires under a given model.
 
--  Relative performance might depend on the details of the dataset. For
-   example, some sorting algorithms run faster if the data are already
-   partially sorted; other algorithms run slower in this case. A common
-   way to avoid this problem is to analyze the **worst case** scenario.
-   It is sometimes useful to analyze average case performance, but
-   that’s usually harder, and it might not be obvious what set of cases
-   to average over.
+算法分析的目的是在不同算法间进行有意义的比较， 但是有一些问题：
 
--  Relative performance also depends on the size of the problem. A
-   sorting algorithm that is fast for small lists might be slow for long
-   lists. The usual solution to this problem is to express run time (or
-   number of operations) as a function of problem size, and group
-   functions into categories depending on how quickly they grow as
-   problem size increases.
+-  算法的相对性能依赖于硬件的特性，因此一个算法可能在机器A上比较快，
+   另一个算法则在机器B上比较快。 对此问题一般的解决办法是指定一个
+   *机器模型* (machine model)
+   并且分析一个算法在一个给定模型下所需的步骤或运算的数目。
 
-The good thing about this kind of comparison is that it lends itself to
-simple classification of algorithms. For example, if I know that the run
-time of Algorithm A tends to be proportional to the size of the input,
-:math:`n`, and Algorithm B tends to be proportional to :math:`n^2`, then
-I expect A to be faster than B, at least for large values of :math:`n`.
+-  相对性能可能依赖于数据集的细节。 例如， 如果数据已经部分排好序，
+   一些排序算法可能更快； 此时其它算法运行的比较慢。
+   避免该问题的一般方法是分析 *最坏情况*\ 。 有时分析平均情况性能也可，
+   但那通常更难，而且可能不容易弄清该对哪些数据集合进行平均。
 
-This kind of analysis comes with some caveats, but we’ll get to that
-later.
+-  相对性能也依赖于问题的规模。一个对于小列表很快的排序算法可能对于长列表很慢。
+   此问题通常的解决方法是将运行时间（或者运算的次数）表示成问题规模的函数，
+   并且根据各自随着问题规模的增长而增加的速度，将函数分成不同的类别。
 
-Order of growth
----------------
+此类比较的好处是有助于对算法进行简单的分类。
+例如，如果我知道算法A的运行时间与输入的规模 :math:`n` 成正比， 算法 B 与
+:math:`n^2` 成正比，那么我可以认为 A 比 B 快，至少对于很大的 :math:`n` 值来说。
 
-Suppose you have analyzed two algorithms and expressed their run times
-in terms of the size of the input: Algorithm A takes :math:`100n+1`
-steps to solve a problem with size :math:`n`; Algorithm B takes
-:math:`n^2 + n + 1` steps.
+这类分析也有一些问题，我们后面会提到。
 
-The following table shows the run time of these algorithms for different
-problem sizes:
+增长量级
+---------------------------
+
+假设你已经分析了两个算法，并能用输入计算量的规模表示它们的运行时间：
+若算法 A 用 :math:`100n+1` 步解决一个规模为 :math:`n` 的问题；而算法 B
+用 :math:`n^2 + n + 1` 步。
+
+下表列出了这些算法对于不同问题规模的运行时间：
 
 +----------+---------------+---------------------+
 | Input    | Run time of   | Run time of         |
@@ -81,128 +63,95 @@ problem sizes:
 | 10 000   | 1 000 001     | :math:`> 10^{10}`   |
 +----------+---------------+---------------------+
 
-At :math:`n=10`, Algorithm A looks pretty bad; it takes almost 10 times
-longer than Algorithm B. But for :math:`n=100` they are about the same,
-and for larger values A is much better.
+当 :math:`n=10` 时，算法 A 看上去很糟糕，它用了 10 倍于算法 B 所需的时间。
+但当 :math:`n=100` 时 ，它们性能几乎相同， 而 :math:`n` 取更大值时，算法
+A 要好得多。
 
-The fundamental reason is that for large values of :math:`n`, any
-function that contains an :math:`n^2` term will grow faster than a
-function whose leading term is :math:`n`. The **leading term** is the
-term with the highest exponent.
+根本原因是对于较大的 :math:`n` 值，任何包含 :math:`n^2`
+项的函数都比首项为 :math:`n` 的函数增长要快。 *首项* (leading term)
+是指具有最高指数的项。
 
-For Algorithm A, the leading term has a large coefficient, 100, which is
-why B does better than A for small :math:`n`. But regardless of the
-coefficients, there will always be some value of :math:`n` where
-:math:`a n^2 > b n`, for any values of :math:`a` and :math:`b`.
+对于算法A，首项有一个较大的系数 100，这是为什么对于小 :math:`n`
+，B比A好。但是不考虑该系数，总有一些 :math:`n` 值使得
+:math:`a n^2 > b n`\ ，:math:`a` 和 :math:`b` 可取任意值。
 
-The same argument applies to the non-leading terms. Even if the run time
-of Algorithm A were :math:`n+1000000`, it would still be better than
-Algorithm B for sufficiently large :math:`n`.
+同样推论也适用于非首项。 即使算法 A 的运行时间为 :math:`n+1000000`
+，对于足够大的 :math:`n` ，它仍然比算法 B 好。
 
-In general, we expect an algorithm with a smaller leading term to be a
-better algorithm for large problems, but for smaller problems, there may
-be a **crossover point** where another algorithm is better. The location
-of the crossover point depends on the details of the algorithms, the
-inputs, and the hardware, so it is usually ignored for purposes of
-algorithmic analysis. But that doesn’t mean you can forget about it.
+一般来讲，我们认为具备较小首项的算法对于规模大的问题是一个好算法，但是对于规模小的问题，可能存在有一个 *交叉点* (crossover point)，在此规模以下，另一个算法更好。
+交叉点的位置取决于算法的细节、输入以及硬件，因此在进行算法分析时它通常被忽略。
+但是这不意味着你可以忘记它。
 
-If two algorithms have the same leading order term, it is hard to say
-which is better; again, the answer depends on the details. So for
-algorithmic analysis, functions with the same leading term are
-considered equivalent, even if they have different coefficients.
+如果两个算法有相同的首项，很难说哪个更好；答案还是取决于细节。
+所以对于算法分析来说，具有相同首项的函数被认为是相当的，即使它们具有不同的系数。
 
-An **order of growth** is a set of functions whose growth behavior is
-considered equivalent. For example, :math:`2n`, :math:`100n` and
-:math:`n+1` belong to the same order of growth, which is written
-:math:`O(n)` in **Big-Oh notation** and often called **linear** because
-every function in the set grows linearly with :math:`n`.
+\ *增长量级*\ (order of growth)是一个函数集合，集合中函数的增长行为被认为是相当的。
+例如\ :math:`2n`\ 、\ :math:`100n`\ 和\ :math:`n+1`\ 属于相同的增长量级，可用
+\ *大O符号*\ (Big-Oh notation) 写成\ :math:`O(n)`\ ，
+而且常被称作 *线性级* (linear)，因为集合中的每个函数随着\ :math:`n`\ 线性增长。
 
-All functions with the leading term :math:`n^2` belong to
-:math:`O(n^2)`; they are called **quadratic**.
+首项为 :math:`n^2` 的函数属于 :math:`O(n^2)`；它们被称为 *二次方级*
+(quadratic)。
 
-The following table shows some of the orders of growth that appear most
-commonly in algorithmic analysis, in increasing order of badness.
+下表列出了算法分析中最通常的一些增长量级，按照运行效率从高到低排列 [2]_。
 
-+-------------------------+-----------------------------------+----+
-| Order of                | Name                              |    |
-+-------------------------+-----------------------------------+----+
-| growth                  |                                   |    |
-+-------------------------+-----------------------------------+----+
-| :math:`O(1)`            | constant                          |    |
-+-------------------------+-----------------------------------+----+
-| :math:`O(\log_b n)`     | logarithmic (for any :math:`b`)   |    |
-+-------------------------+-----------------------------------+----+
-| :math:`O(n)`            | linear                            |    |
-+-------------------------+-----------------------------------+----+
-| :math:`O(n \log_b n)`   | linearithmic                      |    |
-+-------------------------+-----------------------------------+----+
-| :math:`O(n^2)`          | quadratic                         |    |
-+-------------------------+-----------------------------------+----+
-| :math:`O(n^3)`          | cubic                             |    |
-+-------------------------+-----------------------------------+----+
-| :math:`O(c^n)`          | exponential (for any :math:`c`)   |    |
-+-------------------------+-----------------------------------+----+
++-------------------------+-------------------------------+----+
+| Order of Growth         | Name                          |    |
++=========================+===============================+====+
+| :math:`O(1)`            | constant                      |    |
++-------------------------+-------------------------------+----+
+| :math:`O(\log_b n)`     | logarithmic                   |    |
++-------------------------+-------------------------------+----+
+| :math:`O(n)`            | linear                        |    |
++-------------------------+-------------------------------+----+
+| :math:`O(n \log_b n)`   | linearithmic                  |    |
++-------------------------+-------------------------------+----+
+| :math:`O(n^2)`          | quadratic                     |    |
++-------------------------+-------------------------------+----+
+| :math:`O(n^3)`          | cubic                         |    |
++-------------------------+-------------------------------+----+
+| :math:`O(c^n)`          | exponential                   |    |
++-------------------------+-------------------------------+----+
 
-For the logarithmic terms, the base of the logarithm doesn’t matter;
-changing bases is the equivalent of multiplying by a constant, which
-doesn’t change the order of growth. Similarly, all exponential functions
-belong to the same order of growth regardless of the base of the
-exponent. Exponential functions grow very quickly, so exponential
-algorithms are only useful for small problems.
 
-Read the Wikipedia page on Big-Oh notation at
-http://en.wikipedia.org/wiki/Big_O_notation and answer the following
-questions:
 
-#. What is the order of growth of :math:`n^3 + n^2`? What about
-   :math:`1000000 n^3 + n^2`? What about :math:`n^3 + 1000000 n^2`?
+对于对数级，对数的基数并不影响增长量级。
+改变基数等价于乘以一个常数，其不改变增长量级。相应的，所有的指数级数都属于相同的增长量级，而无需考虑指数的基数大小。指数函数增长量级增长的非常快，因此指数级算法只用于小规模问题。
 
-#. What is the order of growth of :math:`(n^2 + n) \cdot (n + 1)`?
-   Before you start multiplying, remember that you only need the leading
-   term.
+习题21-1
+^^^^^^^^^^^^^^
 
-#. If :math:`f` is in :math:`O(g)`, for some unspecified function
-   :math:`g`, what can we say about :math:`af+b`?
+访问 http://en.wikipedia.org/wiki/Big_O_notation ，阅读维基百科关于大O符号的介绍，并回答以下问题：
 
-#. If :math:`f_1` and :math:`f_2` are in :math:`O(g)`, what can we say
-   about :math:`f_1 + f_2`?
+#. \ :math:`n^3 + n^2`\ 的增长量级是多少？:math:`1000000 n^3 + n^2` 和 :math:`n^3 + 1000000 n^2` 的增长量级又是多少？
 
-#. If :math:`f_1` is in :math:`O(g)` and :math:`f_2` is in :math:`O(h)`,
-   what can we say about :math:`f_1 + f_2`?
+#. \ :math:`(n^2 + n) \cdot (n + 1)`\ 的增长量级是多少？在开始计算之前，记住你只需要考虑首项即可。
 
-#. If :math:`f_1` is in :math:`O(g)` and :math:`f_2` is :math:`O(h)`,
-   what can we say about :math:`f_1 \cdot f_2`?
+#. 如果 :math:`f` 的增长量级为 :math:`O(g)` ，那么对于未指定的函数 :math:`g` ，我们可以如何描述 :math:`af+b` ？
 
-Programmers who care about performance often find this kind of analysis
-hard to swallow. They have a point: sometimes the coefficients and the
-non-leading terms make a real difference. Sometimes the details of the
-hardware, the programming language, and the characteristics of the input
-make a big difference. And for small problems asymptotic behavior is
-irrelevant.
+#. 如果 :math:`f_1` 和 :math:`f_2` 的增长量级为 :math:`O(g)`，那么 :math:`f_1 + f_2` 的增长量级又是多少？
 
-But if you keep those caveats in mind, algorithmic analysis is a useful
-tool. At least for large problems, the “better” algorithms is usually
-better, and sometimes it is *much* better. The difference between two
-algorithms with the same order of growth is usually a constant factor,
-but the difference between a good algorithm and a bad algorithm is
-unbounded!
+#. 如果 :math:`f_1` 的增长量级为 :math:`O(g)` ，:math:`f_2` 的增长量级为 :math:`O(h)`，那么 :math:`f_1 + f_2` 的增长量级是多少？
 
-Analysis of basic Python operations
------------------------------------
+#. 如果 :math:`f_1` 的增长量级为 :math:`O(g)` ，:math:`f_2` 的增长量级为 :math:`O(h)`，那么 :math:`f_1 \cdot f_2` 的增长量级是多少？
 
-In Python, most arithmetic operations are constant time; multiplication
-usually takes longer than addition and subtraction, and division takes
-even longer, but these run times don’t depend on the magnitude of the
-operands. Very large integers are an exception; in that case the run
-time increases with the number of digits.
+关注性能的程序员经常发现这种分析很难忍受。他们的观点有一定道理：有时系数和非首项会产生巨大的影响。
+有时，硬件的细节、编程语言以及输入的特性会造成很大的影响。对于小问题，渐近的行为没有什么影响。
 
-Indexing operations—reading or writing elements in a sequence or
-dictionary—are also constant time, regardless of the size of the data
-structure.
+但是，如果你牢记这些注意事项，算法分析就是一个有用的工具。
+至少对于大问题，“更好的” 算法通常更好，并且有时要好的多。
+相同增长量级的两个算法之间的不同通常是一个常数因子，但是一个好算法和一个坏算法之间的不同是无限的！
 
-A for loop that traverses a sequence or dictionary is usually linear, as
-long as all of the operations in the body of the loop are constant time.
-For example, adding up the elements of a list is linear:
+Python基本运算操作分析
+------------------------------------
+
+在 Python 中，大部分算术运算的开销是常数级的；乘法会比加减法用更长的时间，除法更长，
+但是这些运算时间不依赖被运算数的数量级。非常大的整数却是个例外；在这种情况下，运行时间随着位数的增加而增加。
+
+索引操作 — 在序列或字典中读写元素 — 的增长量级也是常数级的，和数据结构的大小无关。
+
+一个遍历序列或字典的 for 循环通常是线性的，只要循环体内的运算是常数时间。
+例如，累加一个列表的元素是线性的：
 
 ::
 
@@ -210,146 +159,102 @@ For example, adding up the elements of a list is linear:
         for x in t:
             total += x
 
-The built-in function sum is also linear because it does the same thing,
-but it tends to be faster because it is a more efficient implementation;
-in the language of algorithmic analysis, it has a smaller leading
-coefficient.
+内建函数 ``sum`` 也是线性的，因为它做的是相同的事情，但是它要更快一些，因为它是一个更有效的实现；从算法分析角度讲，它具有更小的首项系数。
 
-As a rule of thumb, if the body of a loop is in :math:`O(n^a)` then the
-whole loop is in :math:`O(n^{a+1})`. The exception is if you can show
-that the loop exits after a constant number of iterations. If a loop
-runs :math:`k` times regardless of :math:`n`, then the loop is in
-:math:`O(n^a)`, even for large :math:`k`.
+根据经验，如果循环体内的增长量级是 :math:`O(n^a)`，则整个循环的增长量级是\ :math:`O(n^{a+1})`\ 。如果这个循环在执行一定数目循环后退出则是例外。
+无论 :math:`n` 取值多少，如果循环仅执行 :math:`k` 次， 整个循环的增长量级是\ :math:`O(n^a)`\ ，即便 :math:`k` 值比较大。
 
-Multiplying by :math:`k` doesn’t change the order of growth, but neither
-does dividing. So if the body of a loop is in :math:`O(n^a)` and it runs
-:math:`n/k` times, the loop is in :math:`O(n^{a+1})`, even for large
-:math:`k`.
+乘上 :math:`k` 并不会改变增长量级，除法也是。
+因此，如果循环体的增长量级是 :math:`O(n^a)`\ ，而且循环执行 :math:`n/k` 次，那么整个循环的增长量级就是 :math:`O(n^{a+1})` , 即使 :math:`k` 值很大。
 
-Most string and tuple operations are linear, except indexing and len,
-which are constant time. The built-in functions min and max are linear.
-The run-time of a slice operation is proportional to the length of the
-output, but independent of the size of the input.
+大部分字符串和元组运算是线性的，除了索引和 ``len`` ，它们是常数时间。
+内建函数 ``min`` 和 ``max`` 是线性的。切片运算与输出的长度成正比，但是和输入的大小无关。
 
-String concatenation is linear; the run time depends on the sum of the
-lengths of the operands.
+字符串拼接是线性的；它的运算时间取决于运算对象的总长度。
 
-All string methods are linear, but if the lengths of the strings are
-bounded by a constant—for example, operations on single characters—they
-are considered constant time. The string method join is linear; the run
-time depends on the total length of the strings.
+所有字符串方法都是线性的，但是如果字符串的长度受限于一个常数 — 例如，在单个字符上的运算 — 它们被认为是常数时间。字符串方法 ``join`` 也是线性的；它的运算时间取决于字符串的总长度。
 
-Most list methods are linear, but there are some exceptions:
+大部分的列表方法是线性的，但是有一些例外：
 
--  Adding an element to the end of a list is constant time on average;
-   when it runs out of room it occasionally gets copied to a bigger
-   location, but the total time for :math:`n` operations is
-   :math:`O(n)`, so the average time for each operation is :math:`O(1)`.
+-  平均来讲，在列表结尾增加一个元素是常数时间。
+   当它超出了所占用空间时，它偶尔被拷贝到一个更大的地方，但是对于
+   :math:`n` 个运算的整体时间仍为 :math:`O(n)` ，
+   所以我每个运算的平均时间是 :math:`O(1)` 。
 
--  Removing an element from the end of a list is constant time.
+-  从一个列表结尾删除一个元素是常数时间。
 
--  Sorting is :math:`O(n \log n)`.
+-  排序是 :math:`O(n \log n)` 。
 
-Most dictionary operations and methods are constant time, but there are
-some exceptions:
+大部分的字典运算和方法是常数时间，但有些例外：
 
--  The run time of update is proportional to the size of the dictionary
-   passed as a parameter, not the dictionary being updated.
+-  ``update`` 的运行时间与作为形参被传递的字典（不是被更新的字典）的大小成正比。
 
--  keys, values and items are constant time because they return
-   iterators. But if you loop through the iterators, the loop will be
-   linear.
+-  ``keys``、``values`` 和 ``items`` 是常数时间，因为它们返回迭代器。
+   但是如果你对迭代器进行循环，循环将是线性的。
 
-The performance of dictionaries is one of the minor miracles of computer
-science. We will see how they work in Section [hashtable].
+字典的性能是计算机科学的一个小奇迹之一。在\ :ref:`hashtable`\ 一节中，我们将介绍它们是如何工作的。
 
-Read the Wikipedia page on sorting algorithms at
-http://en.wikipedia.org/wiki/Sorting_algorithm and answer the following
-questions:
+习题21-2
+^^^^^^^^^^^^^^
 
-#. What is a “comparison sort?” What is the best worst-case order of
-   growth for a comparison sort? What is the best worst-case order of
-   growth for any sort algorithm?
+访问 http://en.wikipedia.org/wiki/Sorting_algorithm ，阅读维基百科上对排序算法的介绍，并回答下面的问题：
 
-#. What is the order of growth of bubble sort, and why does Barack Obama
-   think it is “the wrong way to go?”
+#. 什么是“比较排序”？比较排序在最差情况下的最好增长量级是多少？别的排序算法在最差情况下的最优增长量级又是多少？
 
-#. What is the order of growth of radix sort? What preconditions do we
-   need to use it?
+#. 冒泡排序法的增长量级是多少？为什么奥巴马认为是“不应采用的方法”
 
-#. What is a stable sort and why might it matter in practice?
+#. 基数排序(radix sort)的增长量级是多少？我们使用它之前需要具备的前提条件有哪些？
 
-#. What is the worst sorting algorithm (that has a name)?
+#. 排序算法的稳定性是指什么？为什么它在实际操作中很重要？
 
-#. What sort algorithm does the C library use? What sort algorithm does
-   Python use? Are these algorithms stable? You might have to Google
-   around to find these answers.
+#. 最差的排序算法是哪一个（有名称的）？
 
-#. Many of the non-comparison sorts are linear, so why does does Python
-   use an :math:`O(n \log n)` comparison sort?
+#. C 语言使用哪种排序算法？Python使用哪种排序算法？这些算法稳定吗？你可能需要谷歌一下，才能找到这些答案。
 
-Analysis of search algorithms
------------------------------
+#. 大多数非比较算法是线性的，因此为什 Python 使用一个 增长量级为 :math:`O(n \log n)` 的比较排序？
 
-A **search** is an algorithm that takes a collection and a target item
-and determines whether the target is in the collection, often returning
-the index of the target.
+搜索算法分析
+---------------------------------------------
 
-The simplest search algorithm is a “linear search”, which traverses the
-items of the collection in order, stopping if it finds the target. In
-the worst case it has to traverse the entire collection, so the run time
-is linear.
+*搜索* (search)算法，接受一个集合以及一个目标项，并判断该目标项是否在集合中，通常返回目标的索引值。
 
-The in operator for sequences uses a linear search; so do string methods
-like find and count.
+最简单的搜素算法是“线性搜索”，其按顺序遍历集合中的项，如果找到目标则停止。
+最坏的情况下， 它不得不遍历全部集合，所以运行时间是线性的。
 
-If the elements of the sequence are in order, you can use a **bisection
-search**, which is :math:`O(\log n)`. Bisection search is similar to the
-algorithm you might use to look a word up in a dictionary (a paper
-dictionary, not the data structure). Instead of starting at the
-beginning and checking each item in order, you start with the item in
-the middle and check whether the word you are looking for comes before
-or after. If it comes before, then you search the first half of the
-sequence. Otherwise you search the second half. Either way, you cut the
-number of remaining items in half.
+序列的 in 操作符使用线性搜索；字符串方法 ``find`` 和 ``count`` 也使用线性搜索。
 
-If the sequence has 1,000,000 items, it will take about 20 steps to find
-the word or conclude that it’s not there. So that’s about 50,000 times
-faster than a linear search.
+如果元素在序列中是排序好的，你可以用 *二分搜素* (bisection search) ，它的增长量级是 :math:`O(\log n)` 。
+二分搜索和你在字典中查找一个单词的算法类似（这里是指真正的字典，不是数据结构）。
+你不会从头开始并按顺序检查每个项，而是从中间的项开始并检查你要查找的单词在前面还是后面。
+如果它出现在前面，那么你搜索序列的前半部分。否则你搜索后一半。如论如何，你将剩余的项数分为一半。
 
-Bisection search can be much faster than linear search, but it requires
-the sequence to be in order, which might require extra work.
+如果序列有 1,000,000 项，它将花 20 步找到该单词或判断出其不在序列中。因此它比线性搜索快大概 50,000 倍。
 
-There is another data structure, called a **hashtable** that is even
-faster—it can do a search in constant time—and it doesn’t require the
-items to be sorted. Python dictionaries are implemented using
-hashtables, which is why most dictionary operations, including the in
-operator, are constant time.
+二分搜索比线性搜索快很多，但是它要求已排序的序列，因此使用时需要做额外的工作。
 
-Hashtables
-----------
+另一个检索速度更快的数据结构被称为 *哈希表* (hashtable) — 它可以在常数时间内检索出结果 — 并且不依赖于序列是否已排序。 Python 中的字典就通过哈希表技术实现的，因此大多数的字典操作，包括 in 操作符，只花费常数时间就可完成。
 
-To explain how hashtables work and why their performance is so good, I
-start with a simple implementation of a map and gradually improve it
-until it’s a hashtable.
+.. _hashtable:
 
-I use Python to demonstrate these implementations, but in real life you
-wouldn’t write code like this in Python; you would just use a
-dictionary! So for the rest of this chapter, you have to imagine that
-dictionaries don’t exist and you want to implement a data structure that
-maps from keys to values. The operations you have to implement are:
+哈希表
+--------------------
 
-add(k, v):
-    Add a new item that maps from key k to value v. With a Python
-    dictionary, d, this operation is written d[k] = v.
+为了解释哈希表是如何工作以及为什么它的性能如此优秀，
+我们从实现一个简单的映射(map)开始并逐步改进它，直到其成为一个哈希表。
 
-get(k):
-    Look up and return the value that corresponds to key k. With a
-    Python dictionary, d, this operation is written d[k] or d.get(k).
+我们使用 Python 来演示这些实现，但在现实生活中，你用不着用 Python 写这样的代码；你只需用内建的字典对象就可以了！因此在接下来的内容中，你就当字典对象并不存在，你希望自己实现一个将键映射到值的数据结构。你必须实现的操作包括：
 
-For now, I assume that each key only appears once. The simplest
-implementation of this interface uses a list of tuples, where each tuple
-is a key-value pair.
+``add(k, v)``：
+
+    增加一个新的项，其从键 k 映射到值 v 。
+    如果使用 Python 的字典d，该运算被写作 ``d[k] = v``。
+
+``get(k)``：
+
+    查找并返回相应键的值。
+    如果使用 Python 的字典d，该运算被写作 ``d[k]`` 或 ``d.get(k)`` 。
+
+现在，假设每个键只出现一次。该接口最简单的实现是使用一个元组列表，其中每个元组是一个键-值对。
 
 ::
 
@@ -367,24 +272,15 @@ is a key-value pair.
                     return val
             raise KeyError
 
-add appends a key-value tuple to the list of items, which takes constant
-time.
+``add`` 向项列表追加一个键—值元组，其增长量级为常数时间。
 
-get uses a for loop to search the list: if it finds the target key it
-returns the corresponding value; otherwise it raises a KeyError. So get
-is linear.
+``get`` 使用 ``for`` 循环搜索该列表：如果它找到目标键，则返回相应的值；否则触发一个 ``KeyError``。因此 ``get`` 是线性的。
 
-An alternative is to keep the list sorted by key. Then get could use a
-bisection search, which is :math:`O(\log n)`. But inserting a new item
-in the middle of a list is linear, so this might not be the best option.
-There are other data structures that can implement add and get in log
-time, but that’s still not as good as constant time, so let’s move on.
+另一个方案是保持列表按键排序。那么，``get`` 可以使用二分搜索，其增长量级为 :math:`O(\log n)` 。 但是在列表中间插入一个新的项是线性的，因此这可能不是最好的选择。
+有其它的数据结构能在对数级时间内实现 ``add`` 和 ``get`` ，但是这仍然不如常数时间好，那么我们继续。
 
-One way to improve LinearMap is to break the list of key-value pairs
-into smaller lists. Here’s an implementation called BetterMap, which is
-a list of 100 LinearMaps. As we’ll see in a second, the order of growth
-for get is still linear, but BetterMap is a step on the path toward
-hashtables:
+另一种改良 ``LinearMap`` 的方法是将键-值对列表分成小列表。
+下面是一个被称作 ``BetterMap`` 的实现，它是 100 个 ``LinearMap`` 组成的列表。 正如一会儿我们将看到的，``get`` 的增长量级仍然是线性的， 但是 ``BetterMap`` 是迈向哈希表的一步。
 
 ::
 
@@ -407,39 +303,26 @@ hashtables:
             m = self.find_map(k)
             return m.get(k)
 
-``__init__`` makes a list of n LinearMaps.
+\ ``__init__``\ 会生成一个由 n 个 ``LinearMap`` 组成的列表。
 
-``find_map`` is used by add and get to figure out which map to put the
-new item in, or which map to search.
+\ ``add``\ 和 ``get`` 使用 ``find_map``  查找往哪一个列表中添加新项，或者对哪个列表进行检索。
 
-``find_map`` uses the built-in function hash, which takes almost any
-Python object and returns an integer. A limitation of this
-implementation is that it only works with hashable keys. Mutable types
-like lists and dictionaries are unhashable.
+\ ``find_map``\  使用了内建函数 ``hash``，其接受几乎任何 Python 对象并返回一个整数。
+这一实现的一个限制是它仅适用于可哈希的键。像列表和字典等可变类型是不能哈希的。
 
-Hashable objects that are considered equivalent return the same hash
-value, but the converse is not necessarily true: two objects with
-different values can return the same hash value.
+被认为是相等的可哈希对象返回相同的哈希值，但是反之不是必然成立：两个具备不同值的对象能够返回相同的哈希值。
 
-``find_map`` uses the modulus operator to wrap the hash values into the
-range from 0 to len(self.maps), so the result is a legal index into the
-list. Of course, this means that many different hash values will wrap
-onto the same index. But if the hash function spreads things out pretty
-evenly (which is what hash functions are designed to do), then we expect
-:math:`n/100` items per LinearMap.
+\ ``find_map``\ 使用求余运算符将哈希值包在 0 到 ``len(self.maps)`` 之间，
+因此结果是该列表的合法索引值。当然，这意味着许多不同的哈希值将被包成相同的索引值。
+但是如果哈希函数散布相当均匀（这是哈希函数被设计的初衷），
+那么我们预计每个 ``LinearMap`` 会有 :math:`n/100` 项。
 
-Since the run time of LinearMap.get is proportional to the number of
-items, we expect BetterMap to be about 100 times faster than LinearMap.
-The order of growth is still linear, but the leading coefficient is
-smaller. That’s nice, but still not as good as a hashtable.
+由于 ``LinearMap.get`` 的运行时间与项数成正比，那么我们预计 ``BetterMap`` 比 ``LinearMap`` 快100倍。
+增长量级仍然是线性的，但是首项系数变小了。这样很好，但是仍然不如哈希表好。
 
-Here (finally) is the crucial idea that makes hashtables fast: if you
-can keep the maximum length of the LinearMaps bounded, LinearMap.get is
-constant time. All you have to do is keep track of the number of items
-and when the number of items per LinearMap exceeds a threshold, resize
-the hashtable by adding more LinearMaps.
+下面是使哈希表变快的关键：如果你能保证 ``LinearMap`` 的最大长度是有上限的，则 ``LinearMap.get`` 的增长量级是常数时间。你只需要跟踪项数并且当每个 ``LinearMap`` 的项数超过阈值时，通过增加更多的 ``LinearMap`` 调整哈希表的大小。
 
-Here is an implementation of a hashtable:
+以下是哈希表的一个实现：
 
 ::
 
@@ -468,136 +351,112 @@ Here is an implementation of a hashtable:
 
             self.maps = new_maps
 
-Each HashMap contains a BetterMap; ``__init__`` starts with just 2
-LinearMaps and initializes num, which keeps track of the number of
-items.
+每个 ``HashMap`` 包含一个 ``BetterMap``。``__init__`` 开始仅有两个 ``LinearMap`` ，并且初始化 ``num``，用于跟踪项的数量。
 
-get just dispatches to BetterMap. The real work happens in add, which
-checks the number of items and the size of the BetterMap: if they are
-equal, the average number of items per LinearMap is 1, so it calls
-resize.
+\ ``get``\ 仅仅用来调度 ``BetterMap``。真正的操作发生于 ``add`` 内，其检查项的数量以及 ``BetterMap`` 的大小：
+如果它们相同，每个 ``LinearMap`` 的平均项数为 1，因此它调用 ``resize``。
 
-resize make a new BetterMap, twice as big as the previous one, and then
-“rehashes” the items from the old map to the new.
+``resize`` 生成一个新的 ``BetterMap``，是之前那个的两倍大，然后将像从旧表“重新哈希”至新的表。
 
-Rehashing is necessary because changing the number of LinearMaps changes
-the denominator of the modulus operator in ``find_map``. That means that
-some objects that used to hash into the same LinearMap will get split up
-(which is what we wanted, right?).
+重新哈希是必要的，因为改变 ``LinearMap`` 的数目也改变了 ``find_map`` 中求余运算的分母。
+这意味着一些被包进相同的 ``LinearMap`` 的对象将被分离（这正是我们希望的，对吧？）。
 
-Rehashing is linear, so resize is linear, which might seem bad, since I
-promised that add would be constant time. But remember that we don’t
-have to resize every time, so add is usually constant time and only
-occasionally linear. The total amount of work to run add :math:`n` times
-is proportional to :math:`n`, so the average time of each add is
-constant time!
+重新哈希是线性的，因此 ``resize`` 是线性的，这可能看起来很糟糕，因为我保证 ``add`` 会是常数时间。 但是记住，我们不必每次都调整，因此 ``add`` 通常是常数时间，只是偶尔是线性的。
+运行 ``add`` :math:`n` 次的整体操作量与 :math:`n` 成正比，因此 ``add`` 的平均运行时间是常数时间！
 
-To see how this works, think about starting with an empty HashTable and
-adding a sequence of items. We start with 2 LinearMaps, so the first 2
-adds are fast (no resizing required). Let’s say that they take one unit
-of work each. The next add requires a resize, so we have to rehash the
-first two items (let’s call that 2 more units of work) and then add the
-third item (one more unit). Adding the next item costs 1 unit, so the
-total so far is 6 units of work for 4 items.
+为了弄清这是如何工作的，考虑以一个空的 ``HashTable`` 开始并增加一系列项。
+我们以两个 ``LinearMap`` 开始，因此前两个 ``add`` 操作很快（不需要调整大小）。
+我们假设它们每个操作花费一个工作单元。下一个 ``add`` 需要进行一次大小调整，
+因此我们必须重新哈希前两项（我们将其算成两个额外的工作单元），然后增加第3项（又一个工作单元）。
+增加下一项的花费一个单元，所以目前为止添加四个项共需要 6 个单元。
 
-The next add costs 5 units, but the next three are only one unit each,
-so the total is 14 units for the first 8 adds.
+下一个 ``add`` 花费 5 个单元，但是之后的3个操作每个只花费 1 个单元，所以前八个 ``add`` 总共需要 14 个单元。
 
-The next add costs 9 units, but then we can add 7 more before the next
-resize, so the total is 30 units for the first 16 adds.
+下一个 ``add`` 花费 9 个单元，但是之后在下一次调整大小之前，可以再增加七个，
+所以前 16 个 ``add`` 总共需要 30 个单元。
 
-After 32 adds, the total cost is 62 units, and I hope you are starting
-to see a pattern. After :math:`n` adds, where :math:`n` is a power of
-two, the total cost is :math:`2n-2` units, so the average work per add
-is a little less than 2 units. When :math:`n` is a power of two, that’s
-the best case; for other values of :math:`n` the average work is a
-little higher, but that’s not important. The important thing is that it
-is :math:`O(1)`.
+进行 32 次 ``add`` 之后，总共花费了 62 个单元，我希望你开始看到规律。
+\ :math:`n`\ 次 ``add`` 后，其中 :math:`n` 是 2 的倍数，总花费是 :math:`2n-2` 个单元，
+所以平均每个 ``add`` 操作只花费了少于 2 个单元。当 :math:`n` 是 2 的倍数时，那是最好的情况。 对于其它的 :math:`n` 值，平均花费稍高一点，但是那并不重要。重要的是其增长量级为 :math:`O(1)` 。
 
-Figure [fig.hash] shows how this works graphically. Each block
-represents a unit of work. The columns show the total work for each add
-in order from left to right: the first two adds cost 1 units, the third
-costs 3 units, etc.
+\ :ref:`fig.hash`\ 形象地说明了其工作原理。每个区块代表一个工作单元。
+每列显示每个 ``add`` 所需的单元，按从左到右的顺序排列：前两个 ``add`` 花费 1 个单元，第三个花费 3 个单元，等等。
 
-.. figure:: figs/towers.pdf
-   :alt: The cost of a hashtable add.[fig.hash]
+.. _fig.hash:
+
+.. figure:: figs/towers.png
+   :alt: 哈希表中 ``add`` 操作的成本
    :width: 5.50000in
 
-   The cost of a hashtable add.[fig.hash]
+   图21-1：哈希表中 ``add`` 操作的成本
 
-The extra work of rehashing appears as a sequence of increasingly tall
-towers with increasing space between them. Now if you knock over the
-towers, spreading the cost of resizing over all adds, you can see
-graphically that the total cost after :math:`n` adds is :math:`2n - 2`.
+重新哈希的额外工作，表现为一系列不断增高的高塔，各自之间的距离越来越大。
+现在，如果你打翻这些塔，将大小调整的代价均摊到所有的 ``add`` 上，你会从图上看到 :math:`n` 次 ``add`` 的整个花费是 :math:`2n - 2` 。
 
-An important feature of this algorithm is that when we resize the
-HashTable it grows geometrically; that is, we multiply the size by a
-constant. If you increase the size arithmetically—adding a fixed number
-each time—the average time per add is linear.
+该算法一个重要的特征是，当我们调整 ``HashTable`` 的大小时，它呈几何级增长；也就是说，我们用常数乘以表的大小。
+如果你按算术级增加大小 —— 每次增加固定的数目 —— 每个 ``add`` 的平均时间是线性的。
 
-You can download my implementation of HashMap from
-http://thinkpython2.com/code/Map.py, but remember that there is no
-reason to use it; if you want a map, just use a Python dictionary.
+你可以从 http://thinkpython2.com/code/Map.py 下载到 ``HashMap`` 的实现代码，你不必使用它；如果你想要一个映射数据结构，只要使用 Python 中的字典即可。
 
-Glossary
---------
+术语表
+------------------
 
-analysis of algorithms:
-    A way to compare algorithms in terms of their run time and/or space
-    requirements.
+算法分析（algorithm analysis）：
 
-machine model:
-    A simplified representation of a computer used to describe
-    algorithms.
+    比较不同算法间运行时间和资源占用的分析方法。
 
-worst case:
-    The input that makes a given algorithm run slowest (or require the
-    most space.
+机器模型（machine model）：
 
-leading term:
-    In a polynomial, the term with the highest exponent.
+    用于描述算法（性能）的简化计算机表示。
 
-crossover point:
-    The problem size where two algorithms require the same run time or
-    space.
+最坏情况（worst case）：
 
-order of growth:
-    A set of functions that all grow in a way considered equivalent for
-    purposes of analysis of algorithms. For example, all functions that
-    grow linearly belong to the same order of growth.
+    使得给定算法运行时间最长（或占用做多资源）的输入。
 
-Big-Oh notation:
-    Notation for representing an order of growth; for example,
-    :math:`O(n)` represents the set of functions that grow linearly.
+首项（leading term）：
+    在多项式中，拥有指数最高的项。
 
-linear:
-    An algorithm whose run time is proportional to problem size, at
-    least for large problem sizes.
+交叉点（crossover point）：
 
-quadratic:
-    An algorithm whose run time is proportional to :math:`n^2`, where
-    :math:`n` is a measure of problem size.
+    使得两个算法需要相同运行时间或资源开销的问题大小。
 
-search:
-    The problem of locating an element of a collection (like a list or
-    dictionary) or determining that it is not present.
+增长量级（order of growth）：
 
-hashtable:
-    A data structure that represents a collection of key-value pairs and
-    performs search in constant time.
+    一个函数集合，从算法分析的角度来看其中的函数的增长视为等价的。例如，线性递增的所有的函数都属于同一个增长量级。
+
+大O记法（Big-Oh notation）：
+
+    代表一个增长量级的记法；例如，:math:`O(n)` 代表线性增长的函数集合。
+
+线性级（linear）：
+
+    算法的运行时间和所求解问题的规模成正比，至少对大的问题规模如此。
+
+二次方级（quadratic）
+
+    算法的运行时间和求解问题的规模的二次方(\ :math:`n^2`\ )成正比，\ :math:`n`\ 用于描述问题的规模。
+
+搜索（search）：
+
+    在一个集合（如列表或字典）中定位某个元素位置的问题，或者判断其不在集合中。
+
+哈希表（hashtable）：
+
+    代表键-值对集合的一种数据结构，执行搜索操作只需常数时间。
+
+**贡献者**
+^^^^^^^^^^^^^^^
+
+#. 翻译：`@SeikaScarlet`_
+#. 校对：`@bingjin`_
+#. 参考：`@carfly`_
+
+.. _@SeikaScarlet: https://github.com/SeikaScarlet
+.. _@bingjin: https://github.com/bingjin
+.. _@carfly: https://github.com/carfly
 
 .. [1]
-   popen is deprecated now, which means we are supposed to stop using it
-   and start using the subprocess module. But for simple cases, I find
-   subprocess more complicated than necessary. So I am going to keep
-   using popen until they take it away.
+   但是，如果你面试中被问到这个问题，我认为更好的答案是，“对上百万个整数进行最快排序的方法就是用你所使用的语言的内建排序函数。它的性能对于大多数应用而言已优化的足够好。但如果最终我的应用运行太慢，我会用性能分析器找出大量的运算时间被用在了哪儿。如果采用一个更快的算法会对性能产生显著的提升，我会试着找一个基数排序的优质实现。”
 
 .. [2]
-   But if you get a question like this in an interview, I think a better
-   answer is, “The fastest way to sort a million integers is to use
-   whatever sort function is provided by the language I’m using. Its
-   performance is good enough for the vast majority of applications, but
-   if it turned out that my application was too slow, I would use a
-   profiler to see where the time was being spent. If it looked like a
-   faster sort algorithm would have a significant effect on performance,
-   then I would look around for a good implementation of radix sort.”
+   constant：常数级；logarithmic：对数级；linear：线性级；linearithmic：线性对数级；quadratic：二次方级；cubic：三次方级；exponential：指数级

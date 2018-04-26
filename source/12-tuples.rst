@@ -1,37 +1,30 @@
-Tuples
-======
+第十二章：元组
+================
 
-This chapter presents one more built-in type, the tuple, and then shows
-how lists, dictionaries, and tuples work together. I also present a
-useful feature for variable-length argument lists, the gather and
-scatter operators.
+本章介绍另一个内置类型：元组，同时说明如何结合使用列表、字典和元组。我还将介绍一个有用的特性，即可变长度参数列表，以及\ *汇集*\ 和\ *分散*\ 操作符。
 
-One note: there is no consensus on how to pronounce “tuple”. Some people
-say “tuh-ple”, which rhymes with “supple”. But in the context of
-programming, most people say “too-ple”, which rhymes with “quadruple”.
+说明：“tuple”并没有统一的发音，有些人读成“tuh-ple”，音律类似于“supple”；
+而在编程的语境下，大部分读成“too-ple”，音律类似于“quadruple”。
 
-Tuples are immutable
---------------------
+元组是不可变的
+--------------------------------------
 
-A tuple is a sequence of values. The values can be any type, and they
-are indexed by integers, so in that respect tuples are a lot like lists.
-The important difference is that tuples are immutable.
+元组是一组值的序列。 其中的值可以是任意类型， 使用整数索引，
+因此从这点上看，元组与列表非常相似。 二者不同之处在于元组的不可变性。
 
-Syntactically, a tuple is a comma-separated list of values:
+语法上，元组是用逗号隔开一系列值：
 
 ::
 
     >>> t = 'a', 'b', 'c', 'd', 'e'
 
-Although it is not necessary, it is common to enclose tuples in
-parentheses:
+虽然并非必须，元组通常用括号括起来：
 
 ::
 
     >>> t = ('a', 'b', 'c', 'd', 'e')
 
-To create a tuple with a single element, you have to include a final
-comma:
+使用单一元素创建元组时，需要在结尾处添加一个逗号：
 
 ::
 
@@ -39,7 +32,7 @@ comma:
     >>> type(t1)
     <class 'tuple'>
 
-A value in parentheses is not a tuple:
+将值放置在括号中并不会创建元组：
 
 ::
 
@@ -47,8 +40,8 @@ A value in parentheses is not a tuple:
     >>> type(t2)
     <class 'str'>
 
-Another way to create a tuple is the built-in function tuple. With no
-argument, it creates an empty tuple:
+另一个创建元组的方法是使用内建函数 ``tuple`` 。
+在没有参数传递时，它会创建一个空元组：
 
 ::
 
@@ -56,8 +49,7 @@ argument, it creates an empty tuple:
     >>> t
     ()
 
-If the argument is a sequence (string, list or tuple), the result is a
-tuple with the elements of the sequence:
+如果实参是一个序列（字符串、列表或者元组），结果将是一个包含序列内元素的元组。
 
 ::
 
@@ -65,11 +57,9 @@ tuple with the elements of the sequence:
     >>> t
     ('l', 'u', 'p', 'i', 'n', 's')
 
-Because tuple is the name of a built-in function, you should avoid using
-it as a variable name.
+因为 ``tuple`` 是内建函数名，所以应该避免将它用作变量名。
 
-Most list operators also work on tuples. The bracket operator indexes an
-element:
+列表的大多数操作符同样也适用于元组。 方括号运算符将索引一个元素：
 
 ::
 
@@ -77,23 +67,22 @@ element:
     >>> t[0]
     'a'
 
-And the slice operator selects a range of elements.
+切片运算符选取一个范围内的元素:
 
 ::
 
     >>> t[1:3]
     ('b', 'c')
 
-But if you try to modify one of the elements of the tuple, you get an
-error:
+但是，如果你试图更改元组中的一个元素，会得到错误信息：
 
 ::
 
     >>> t[0] = 'A'
     TypeError: object doesn't support item assignment
 
-Because tuples are immutable, you can’t modify the elements. But you can
-replace one tuple with another:
+因为元组是不可变的，你无法改变其中的元素。
+但是可以使用其他元组替换现有元组：
 
 ::
 
@@ -101,13 +90,11 @@ replace one tuple with another:
     >>> t
     ('A', 'b', 'c', 'd', 'e')
 
-This statement makes a new tuple and then makes t refer to it.
+这个语句创建了一个新元组，然后让 ``t`` 引用该元组。
 
-The relational operators work with tuples and other sequences; Python
-starts by comparing the first element from each sequence. If they are
-equal, it goes on to the next elements, and so on, until it finds
-elements that differ. Subsequent elements are not considered (even if
-they are really big).
+关系型运算符也适用于元组和其他序列；
+Python 会首先比较序列中的第一个元素，如果它们相等，就继续比较下一组元素，以此类推，直至比值不同。
+其后的元素（即便是差异很大）也不会再参与比较。
 
 ::
 
@@ -116,12 +103,11 @@ they are really big).
     >>> (0, 1, 2000000) < (0, 3, 4)
     True
 
-Tuple assignment
-----------------
+元组赋值
+----------------------------
 
-It is often useful to swap the values of two variables. With
-conventional assignments, you have to use a temporary variable. For
-example, to swap a and b:
+两个变量互换值的操作通常很有用。 按照传统的赋值方法，你需要使用一个临时变量。
+例如，为了交换 ``a`` 和 ``b`` 的值：
 
 ::
 
@@ -129,36 +115,34 @@ example, to swap a and b:
     >>> a = b
     >>> b = temp
 
-This solution is cumbersome; **tuple assignment** is more elegant:
+这个方法很繁琐；通过\ **元组赋值**\ 来实现更为优雅：
 
 ::
 
     >>> a, b = b, a
 
-The left side is a tuple of variables; the right side is a tuple of
-expressions. Each value is assigned to its respective variable. All the
-expressions on the right side are evaluated before any of the
-assignments.
+等号左侧是变量组成的元组；右侧是表达式组成的元组。
+每个值都被赋给了对应的变量。
+变量被重新赋值前，将先对右侧的表达式进行求值。
 
-The number of variables on the left and the number of values on the
-right have to be the same:
+
+左侧的变量数和右侧值的数目必须相同：
 
 ::
 
     >>> a, b = 1, 2, 3
     ValueError: too many values to unpack
 
-More generally, the right side can be any kind of sequence (string, list
-or tuple). For example, to split an email address into a user name and a
-domain, you could write:
+一般来说，右侧可以是任意类型（字符串、列表或者元组）的序列。
+例如， 将一个电子邮箱地址分成用户名和域名， 你可以这样做：
 
 ::
 
     >>> addr = 'monty@python.org'
     >>> uname, domain = addr.split('@')
 
-The return value from split is a list with two elements; the first
-element is assigned to uname, the second to domain.
+\ ``split``\  函数返回的对象是一个包含两个元素的列表；
+第一个元素被赋给了变量 ``uname`` ，第二个被赋给了 ``domain`` 。
 
 ::
 
@@ -167,18 +151,14 @@ element is assigned to uname, the second to domain.
     >>> domain
     'python.org'
 
-Tuples as return values
------------------------
+元组作为返回值
+-----------------------------------------
 
-Strictly speaking, a function can only return one value, but if the
-value is a tuple, the effect is the same as returning multiple values.
-For example, if you want to divide two integers and compute the quotient
-and remainder, it is inefficient to compute x/y and then x%y. It is
-better to compute them both at the same time.
+严格地说，一个函数只能返回一个值，但是如果这个返回值是元组，其效果等同于返回多个值。
+例如，你想对两个整数做除法，计算出商和余数，依次计算出\ :math:`x/y`\ 和 x%y 的效率并不高。同时计算出这两个值更好。
 
-The built-in function divmod takes two arguments and returns a tuple of
-two values, the quotient and remainder. You can store the result as a
-tuple:
+内建函数 ``divmod`` 接受两个实参，返回包含两个值的元组：商和余数。
+你可以使用元组来存储返回值:
 
 ::
 
@@ -186,7 +166,7 @@ tuple:
     >>> t
     (2, 1)
 
-Or use tuple assignment to store the elements separately:
+或者使用元组赋值分别存储它们：
 
 ::
 
@@ -196,41 +176,41 @@ Or use tuple assignment to store the elements separately:
     >>> rem
     1
 
-Here is an example of a function that returns a tuple:
+下面是一个返回元组作为结果的函数例子：
 
 ::
 
     def min_max(t):
         return min(t), max(t)
 
-max and min are built-in functions that find the largest and smallest
-elements of a sequence. ``min_max`` computes both and returns a tuple of
-two values.
+\ ``max``\ 和 ``min`` 是用于找出一组元素序列中最大值和最小值的内建函数。
+\ ``min_max``\ 函数同时计算出这两个值，并返回二者组成的元组。
 
-Variable-length argument tuples
--------------------------------
+.. _gather:
 
-Functions can take a variable number of arguments. A parameter name that
-begins with **gathers** arguments into a tuple. For example, printall
-takes any number of arguments and prints them:
+可变长度参数元组
+---------------------------------------------------
+
+函数可以接受可变数量的参数。 以 “\*” 开头的形参将输入的参数 *汇集* 到一个元组中。
+例如，``printall`` 可以接受任意数量的参数，并且将它们打印出来：
 
 ::
 
     def printall(*args):
         print(args)
 
-The gather parameter can have any name you like, but args is
-conventional. Here’s how the function works:
+汇集形参可以使用任意名字，但是习惯使用 ``args``。
+以下是这个函数的调用效果：
 
 ::
 
     >>> printall(1, 2.0, '3')
     (1, 2.0, '3')
 
-The complement of gather is **scatter**. If you have a sequence of
-values and you want to pass it to a function as multiple arguments, you
-can use the operator. For example, divmod takes exactly two arguments;
-it doesn’t work with a tuple:
+与汇集相对的，是 **分散（scatter）** 。
+如果你有一个值序列，并且希望将其作为多个参数传递给一个函数，
+你可以使用运算符\*。 例如，``divmod`` 只接受两个实参；
+元组则无法作为参数传递进去：
 
 ::
 
@@ -238,40 +218,37 @@ it doesn’t work with a tuple:
     >>> divmod(t)
     TypeError: divmod expected 2 arguments, got 1
 
-But if you scatter the tuple, it works:
+但是如果你将这个元组分散，它就可以被传递进函数：
 
 ::
 
     >>> divmod(*t)
     (2, 1)
 
-Many of the built-in functions use variable-length argument tuples. For
-example, max and min can take any number of arguments:
+许多内建函数使用了可变长度参数元组。 例如，``max`` 和 ``min`` 就可以接受任意数量的实参：
 
 ::
 
     >>> max(1, 2, 3)
     3
 
-But sum does not.
+但是 ``sum`` 不行：
 
 ::
 
     >>> sum(1, 2, 3)
     TypeError: sum expected at most 2 arguments, got 3
 
-As an exercise, write a function called sumall that takes any number of
-arguments and returns their sum.
+我们做个练习，编写一个叫做 ``small`` 的函数，使它能够接受任何数量的实参并返回它们的和。
 
-Lists and tuples
-----------------
+列表和元组
+------------------------
 
-zip is a built-in function that takes two or more sequences and returns
-a list of tuples where each tuple contains one element from each
-sequence. The name of the function refers to a zipper, which joins and
-interleaves two rows of teeth.
+\ ``zip``\ 是一个内建函数，可以接受将两个或多个序列组，并返回一个元组列表，
+其中每个元组包含了各个序列中相对位置的一个元素。
+这个函数的名称来自名词拉链(zipper)，后者将两片链齿连接拼合在一起。
 
-This example zips a string and a list:
+下面的示例对一个字符串和列表使用 ``zip`` 函数：
 
 ::
 
@@ -280,8 +257,8 @@ This example zips a string and a list:
     >>> zip(s, t)
     <zip object at 0x7f7d0a9e7c48>
 
-The result is a **zip object** that knows how to iterate through the
-pairs. The most common use of zip is in a for loop:
+输出的结果是一个 **zip 对象**，包含了如何对其中元素进行迭代的信息。
+\ ``zip`` \ 函数最常用于 ``for`` 循环：
 
 ::
 
@@ -292,31 +269,27 @@ pairs. The most common use of zip is in a for loop:
     ('b', 1)
     ('c', 2)
 
-A zip object is a kind of **iterator**, which is any object that
-iterates through a sequence. Iterators are similar to lists in some
-ways, but unlike lists, you can’t use an index to select an element from
-an iterator.
+\ ``zip``\ 对象是\ **迭代器**\ 的一种，即任何能够按照某个序列迭代的对象。
+迭代器在某些方面与列表非常相似，但不同之处在于，你无法通过索引来选择迭代器中的某个元素。
 
-If you want to use list operators and methods, you can use a zip object
-to make a list:
+如果你想使用列表操作符和方法，你可以通过 ``zip`` 对象创建一个列表：
 
 ::
 
     >>> list(zip(s, t))
     [('a', 0), ('b', 1), ('c', 2)]
 
-The result is a list of tuples; in this example, each tuple contains a
-character from the string and the corresponding element from the list.
+结果就是一个包含若干元组的列表；在这个例子中，每个元组又包含了字符串中的一个字符和列表
+中对应的一个元素。
 
-If the sequences are not the same length, the result has the length of
-the shorter one.
+如果用于创建的序列长度不一，返回对象的长度以最短序列的长度为准。
 
 ::
 
     >>> list(zip('Anne', 'Elk'))
     [('A', 'E'), ('n', 'l'), ('n', 'k')]
 
-You can use tuple assignment in a for loop to traverse a list of tuples:
+你可以在 ``for`` 循环中使用元组赋值，遍历包含元组的列表：
 
 ::
 
@@ -324,9 +297,8 @@ You can use tuple assignment in a for loop to traverse a list of tuples:
     for letter, number in t:
         print(number, letter)
 
-Each time through the loop, Python selects the next tuple in the list
-and assigns the elements to letter and number. The output of this loop
-is:
+每次循环时，Python 会选择列表中的下一个元组，
+并将其内容赋给 ``letter`` 和 ``number`` 。循环的输出是：
 
 ::
 
@@ -334,10 +306,9 @@ is:
     1 b
     2 c
 
-If you combine zip, for and tuple assignment, you get a useful idiom for
-traversing two (or more) sequences at the same time. For example,
-``has_match`` takes two sequences, t1 and t2, and returns True if there
-is an index i such that t1[i] == t2[i]:
+如果将 ``zip`` 、``for`` 循环和元组赋值结合起来使用，你会得到一个可以同时遍历两个（甚至多个）序列的惯用法。
+例如，``has_match`` 接受两个序列 ``t1`` 和 ``t2`` ，
+如果存在索引 ``i`` 让 ``t1[i] == t2[i]`` ，则返回 ``True`` ：
 
 ::
 
@@ -347,17 +318,18 @@ is an index i such that t1[i] == t2[i]:
                 return True
         return False
 
-If you need to traverse the elements of a sequence and their indices,
-you can use the built-in function enumerate:
+
+如果需要遍历一个序列的元素以及其索引号，你可以使用内建函数 ``enumerate`` ：
 
 ::
 
     for index, element in enumerate('abc'):
         print(index, element)
 
-The result from enumerate is an enumerate object, which iterates a
-sequence of pairs; each pair contains an index (starting from 0) and an
-element from the given sequence. In this example, the output is
+\ ``enumerate``\ 的返回结果是一个枚举对象（enumerate
+object），可迭代一个包含若干个\ *对*\ 的序列；
+每个对包含了（从0开始计数）的索引和给定序列中的对应元素。
+在这个例子中，输出结果是：
 
 ::
 
@@ -365,13 +337,12 @@ element from the given sequence. In this example, the output is
     1 b
     2 c
 
-Again.
+和前一个示例的结果一样。
 
-Dictionaries and tuples
------------------------
+字典和元组
+-------------------------------------
 
-Dictionaries have a method called items that returns a sequence of
-tuples, where each tuple is a key-value pair.
+字典有一个叫做 ``items`` 的方法，它返回由多个元组组成的序列，其中每个元组是一个键值对。
 
 ::
 
@@ -380,8 +351,8 @@ tuples, where each tuple is a key-value pair.
     >>> t
     dict_items([('c', 2), ('a', 0), ('b', 1)])
 
-The result is a ``dict_items`` object, which is an iterator that
-iterates the key-value pairs. You can use it in a for loop like this:
+其结果是一个 ``dict_items`` 对象，这是一个对键值对进行迭代的迭代器。
+你可以在 ``for`` 循环中像这样使用它:
 
 ::
 
@@ -392,11 +363,9 @@ iterates the key-value pairs. You can use it in a for loop like this:
     a 0
     b 1
 
-As you should expect from a dictionary, the items are in no particular
-order.
+由于是字典生成的对象，你应该猜到了这些项是无序的。
 
-Going in the other direction, you can use a list of tuples to initialize
-a new dictionary:
+另一方面，你可以使用元组的列表初始化一个新的字典：
 
 ::
 
@@ -405,7 +374,7 @@ a new dictionary:
     >>> d
     {'a': 0, 'c': 2, 'b': 1}
 
-Combining dict with zip yields a concise way to create a dictionary:
+将 ``dict`` 和 ``zip`` 结合使用，可以很简洁地创建一个字典：
 
 ::
 
@@ -413,108 +382,89 @@ Combining dict with zip yields a concise way to create a dictionary:
     >>> d
     {'a': 0, 'c': 2, 'b': 1}
 
-The dictionary method update also takes a list of tuples and adds them,
-as key-value pairs, to an existing dictionary.
+字典的 ``update`` 方法也接受元组列表，并将其作为键值对添加到已有的字典中去。
 
-It is common to use tuples as keys in dictionaries (primarily because
-you can’t use lists). For example, a telephone directory might map from
-last-name, first-name pairs to telephone numbers. Assuming that we have
-defined last, first and number, we could write:
+在字典中使用元组作为键（主要因为无法使用列表）的做法很常见。  
+例如，一个电话簿可能会基于用户的姓-名对，来映射至号码。
+假设我们已经定义了 ``last`` 、 ``first`` 和 ``number`` 三个变量，
+我们可以这样实现映射：
 
 ::
 
     directory[last, first] = number
 
-The expression in brackets is a tuple. We could use tuple assignment to
-traverse this dictionary.
+方括号中的表达式是一个元组。我们可以通过元组赋值来遍历这个字典：
 
 ::
 
     for last, first in directory:
         print(first, last, directory[last,first])
 
-This loop traverses the keys in directory, which are tuples. It assigns
-the elements of each tuple to last and first, then prints the name and
-corresponding telephone number.
+该循环遍历电话簿中的键，它们其实是元组。 循环将元组的元素赋给 ``last`` 和 ``first`` ，
+然后打印出姓名和对应的电话号码。
 
-There are two ways to represent tuples in a state diagram. The more
-detailed version shows the indices and elements just as they appear in a
-list. For example, the tuple ``('Cleese', 'John')`` would appear as in
-Figure [fig.tuple1].
+在状态图中有两种表示元组的方法。更详细的版本是，
+索引号和对应元素就像列表一样存放在元组中。例如，元组 ``('Cleese', 'John')`` 可像\ :ref:`fig.tuple1`\ 中那样存放。
 
-.. figure:: figs/tuple1.pdf
-   :alt: State diagram.
+.. _fig.tuple1:
 
-   State diagram.
+.. figure:: ../source/figs/tuple1.png
+   :alt: 图12-1：状态图
 
-But in a larger diagram you might want to leave out the details. For
-example, a diagram of the telephone directory might appear as in
-Figure [fig.dict2].
+   图12-1：状态图
 
-.. figure:: figs/dict2.pdf
-   :alt: State diagram.
+在更大的图表中，你不会想要再描述这些细节。
+例如，该电话簿的状态图可能如\ :ref:`fig.dict2`\ 所示。
 
-   State diagram.
+.. _fig.dict2:
 
-Here the tuples are shown using Python syntax as a graphical shorthand.
-The telephone number in the diagram is the complaints line for the BBC,
-so please don’t call it.
+.. figure:: ../source/figs/dict2.png
+   :alt: 图12-2：状态图
 
-Sequences of sequences
-----------------------
+   图12-2：状态图
 
-I have focused on lists of tuples, but almost all of the examples in
-this chapter also work with lists of lists, tuples of tuples, and tuples
-of lists. To avoid enumerating the possible combinations, it is
-sometimes easier to talk about sequences of sequences.
+在上图中，为了方便起见，使用 Python 语法表示元组。
+此图中的电话号码是 BBC 的投诉热线，请不要拨打它。
 
-In many contexts, the different kinds of sequences (strings, lists and
-tuples) can be used interchangeably. So how should you choose one over
-the others?
+序列嵌套
+----------------------------------
 
-To start with the obvious, strings are more limited than other sequences
-because the elements have to be characters. They are also immutable. If
-you need the ability to change the characters in a string (as opposed to
-creating a new string), you might want to use a list of characters
-instead.
+我已经介绍了包含元组的列表，
+但本章几乎所有示例也适用于列表嵌套列表、元组嵌套元组，以及元组嵌套列表。
+为了避免穷举这类可能的嵌套组合，介绍序列嵌套有时更简单一些。
 
-Lists are more common than tuples, mostly because they are mutable. But
-there are a few cases where you might prefer tuples:
+在很多情况下，不同类型的序列（字符串、列表、元组）可以互换使用。
+因此，我们该如何选用合适的序列呢？
 
-#. In some contexts, like a return statement, it is syntactically
-   simpler to create a tuple than a list.
+首先，显而易见的是，字符串比其他序列的限制更多，因为它的所有元素都必须是字符，且字符串不可变。如果你希望能够改变字符串中的字符，使用列表嵌套字符或许更合适。
 
-#. If you want to use a sequence as a dictionary key, you have to use an
-   immutable type like a tuple or string.
+列表比元组更常用，主要是因为它们是可变的。
+但是有些情况下，你可能更倾向于使用元组：
 
-#. If you are passing a sequence as an argument to a function, using
-   tuples reduces the potential for unexpected behavior due to aliasing.
+#. 在一些情况下（例如 ``return`` 语句），从句式上生成一个元组比列表要简单。
 
-Because tuples are immutable, they don’t provide methods like sort and
-reverse, which modify existing lists. But Python provides the built-in
-function sorted, which takes any sequence and returns a new list with
-the same elements in sorted order, and reversed, which takes a sequence
-and returns an iterator that traverses the list in reverse order.
+#. 如果你想使用一个序列作为字典的键，那么你必须使用元组或字符串这样的不可变类型。
 
-Debugging
----------
+#. 如果你向函数传入一个序列作为参数，那么使用元组可以降低由于别名而产生的意外行为的可能性。
 
-Lists, dictionaries and tuples are examples of **data structures**; in
-this chapter we are starting to see compound data structures, like lists
-of tuples, or dictionaries that contain tuples as keys and lists as
-values. Compound data structures are useful, but they are prone to what
-I call **shape errors**; that is, errors caused when a data structure
-has the wrong type, size, or structure. For example, if you are
-expecting a list with one integer and I give you a plain old integer
-(not in a list), it won’t work.
+由于元组的不可变性，它们没有类似（\ ``sort``\ ） 和
+（\ ``reverse``\ ）这样修改现有列表的方法。
+然而 Python 提供了内建函数 ``sorted`` 和 ``reversed`` ，前者可以接受任意序列，并返回一个正序排列的新列表，后者则接受一个序列，返回一个可逆序迭代列表的迭代器。
 
-To help debug these kinds of errors, I have written a module called
-structshape that provides a function, also called structshape, that
-takes any kind of data structure as an argument and returns a string
-that summarizes its shape. You can download it from
-http://thinkpython2.com/code/structshape.py
+调试
+-----------------
 
-Here’s the result for a simple list:
+列表、字典和元组都是\ *数据结构* （\ **data
+structures**\ ）；本章中，我们开始接触到复合数据结构（\ **compound data structures**\ ），如：列表嵌套元组，以及使用元组作为键、列表作为值的字典。
+复合数据结构非常实用，但是使用时容易出现所谓的\ *形状错误（shape
+errors）*\ ，也就是由于数据结构的类型、大小或结构问题而引发的错误。
+例如，当你希望使用一个整数组成的列表时，我却给了你一个纯粹的整数（没有放在列表中），就会出现错误。
+
+为了方便调试这类错误，我编写了一个叫做 ``structshape`` 的模块，
+它提供了一个同名函数，可以接受任意类型的数据结构作为实参，然后返回一个描述它形状的字符串。
+你可以从 http://thinkpython2.com/code/structshape.py 下载该模块。
+
+下面是用该模块调试一个简单列表的示例：
 
 ::
 
@@ -523,8 +473,9 @@ Here’s the result for a simple list:
     >>> structshape(t)
     'list of 3 int'
 
-A fancier program might write “list of 3 int\ *s*”, but it was easier
-not to deal with plurals. Here’s a list of lists:
+更完美的程序应该显示 “list of 3
+int\ *s*”，但是忽略英文复数使程序变得简单的多。
+我们再看一个列表嵌套的例子：
 
 ::
 
@@ -532,8 +483,7 @@ not to deal with plurals. Here’s a list of lists:
     >>> structshape(t2)
     'list of 3 list of 2 int'
 
-If the elements of the list are not the same type, structshape groups
-them, in order, by type:
+如果列表内的元素不是相同类型，``structshape`` 会按照类型的顺序进行分组：
 
 ::
 
@@ -541,7 +491,7 @@ them, in order, by type:
     >>> structshape(t3)
     'list of (3 int, float, 2 str, 2 list of int, int)'
 
-Here’s a list of tuples:
+下面是一个元组列表的例子：
 
 ::
 
@@ -550,69 +500,75 @@ Here’s a list of tuples:
     >>> structshape(lt)
     'list of 3 tuple of (int, str)'
 
-And here’s a dictionary with 3 items that map integers to strings.
+下面是一个字典的例子，其中包含三个将整数映射至字符串的项：
 
 ::
 
-    >>> d = dict(lt) 
+    >>> d = dict(lt)
     >>> structshape(d)
     'dict of 3 int->str'
 
-If you are having trouble keeping track of your data structures,
-structshape can help.
 
-Glossary
---------
+如果你在追踪数据结构的类型上遇到了困难，可以使用 ``structshape`` 来帮助分析。
 
-tuple:
-    An immutable sequence of elements.
+术语表
+------------------
 
-tuple assignment:
-    An assignment with a sequence on the right side and a tuple of
-    variables on the left. The right side is evaluated and then its
-    elements are assigned to the variables on the left.
+元组（tuple）：
 
-gather:
-    The operation of assembling a variable-length argument tuple.
+    一个由多个元素组成的不可变序列。
 
-scatter:
-    The operation of treating a sequence as a list of arguments.
+元组赋值（tuple assignment）：
 
-zip object:
-    The result of calling a built-in function zip; an object that
-    iterates through a sequence of tuples.
+    一种赋值方式，等号右侧为一个序列，等号左侧为一个变量组成的元组。右侧的表达式先求值，然后其元素被赋值给左侧元组中对应的变量。
 
-iterator:
-    An object that can iterate through a sequence, but which does not
-    provide list operators and methods.
+汇集（gather）：
 
-data structure:
-    A collection of related values, often organized in lists,
-    dictionaries, tuples, etc.
+    组装可变长度实参元组的一种操作。
 
-shape error:
-    An error caused because a value has the wrong shape; that is, the
-    wrong type or size.
+分散（scatter）：
 
-Exercises
----------
+    将一个序列变换成一个参数列表的操作。
 
-Write a function called ``most_frequent`` that takes a string and prints
-the letters in decreasing order of frequency. Find text samples from
-several different languages and see how letter frequency varies between
-languages. Compare your results with the tables at
-http://en.wikipedia.org/wiki/Letter_frequencies. Solution:
-http://thinkpython2.com/code/most_frequent.py.
+zip 对象：
 
-[anagrams]
+    使用内建函数 ``zip`` 所返回的结果；它是一个可以对元组序列进行迭代的对象。
 
-More anagrams!
+迭代器（iterator）：
 
-#. Write a program that reads a word list from a file (see
-   Section [wordlist]) and prints all the sets of words that are
-   anagrams.
+    一个可以对序列进行迭代的对象，但是并不提供列表操作符和方法。
 
-   Here is an example of what the output might look like:
+数据结构（data structure）：
+
+    一个由关联值组成的数据集合，通常组织成列表、字典、元组等。
+
+形状错误（shape error）：
+
+    由于某个值的形状出错，而导致的错误；即拥有错误的类型或大小。
+
+练习题
+-----------------
+
+习题12-1
+^^^^^^^^^^^
+
+编写一个名为 ``most_frequent`` 的函数，接受一个字符串，并按字符出现频率降序打印字母。
+找一些不同语言的文本样本，来试试看不同语言之间字母频率的区别。
+将你的结果和 http://en.wikipedia.org/wiki/Letter_frequencies 页面上的表格进行比较。
+
+答案： http://thinkpython2.com/code/most_frequent.py 。
+
+.. _anagrams:
+
+习题12-2
+^^^^^^^^^^^
+
+再来练习练习易位构词：
+
+#. 编写一个程序，使之能从文件中读取单词列表（参考\ :ref:`wordlist`\ 一节），
+   并且打印出所有属于易位构词的单词组合。
+
+   下面是一个输出结果的示例：
 
    ::
 
@@ -621,65 +577,61 @@ More anagrams!
        ['generating', 'greatening']
        ['resmelts', 'smelters', 'termless']
 
-   Hint: you might want to build a dictionary that maps from a
-   collection of letters to a list of words that can be spelled with
-   those letters. The question is, how can you represent the collection
-   of letters in a way that can be used as a key?
+   提示：你也许应该创建一个字典，用于映射一个字母集合到一个该集合可异位构词的词汇集合。但是问题是，你怎样表示这个字母集合才能将其用作字典的键呢？
 
-#. Modify the previous program so that it prints the longest list of
-   anagrams first, followed by the second longest, and so on.
+#. 改写前面的程序，使之先打印易位构词数量最多的列表，第二多的次之，依次按易位构词的数量排列。
 
-#. In Scrabble a “bingo” is when you play all seven tiles in your rack,
-   along with a letter on the board, to form an eight-letter word. What
-   collection of 8 letters forms the most possible bingos? Hint: there
-   are seven.
+#. 在Scrabble 拼字游戏中，游戏胜利（“bingo”）指的是你利用手里的全部七个字母，与图版上的那个字母一起构成一个8个字母的单词。哪八个字母能够达成最多的“bingo”？提示：最多有7种胜利方式。
 
-   Solution: http://thinkpython2.com/code/anagram_sets.py.
+   答案： http://thinkpython2.com/code/anagram_sets.py 。
 
-Two words form a “metathesis pair” if you can transform one into the
-other by swapping two letters; for example, “converse” and “conserve”.
-Write a program that finds all of the metathesis pairs in the
-dictionary. Hint: don’t test all pairs of words, and don’t test all
-possible swaps. Solution: http://thinkpython2.com/code/metathesis.py.
-Credit: This exercise is inspired by an example at http://puzzlers.org.
+习题12-3
+^^^^^^^^^^^
 
-Here’s another Car Talk Puzzler
-(http://www.cartalk.com/content/puzzlers):
+如果两个单词中的某一单词可以通过调换两个字母变为另一个，这两个单词就构成了“换位对（metatheisi
+pair）”；比如，“converse”和“conserve”。
+编写一个程序，找出字典里所有的“换位对”。
 
-    What is the longest English word, that remains a valid English word,
-    as you remove its letters one at a time?
+提示：不用测试所有的单词组合，也不用测试所有的字母调换组合。致谢：这道习题受 http://puzzlers.org 上的案例启发而来。
 
-    Now, letters can be removed from either end, or the middle, but you
-    can’t rearrange any of the letters. Every time you drop a letter,
-    you wind up with another English word. If you do that, you’re
-    eventually going to wind up with one letter and that too is going to
-    be an English word—one that’s found in the dictionary. I want to
-    know what’s the longest word and how many letters does it have?
+答案： http://thinkpython2.com/code/metathesis.py 。
 
-    I’m going to give you a little modest example: Sprite. Ok? You start
-    off with sprite, you take a letter off, one from the interior of the
-    word, take the r away, and we’re left with the word spite, then we
-    take the e off the end, we’re left with spit, we take the s off,
-    we’re left with pit, it, and I.
+习题12-4
+^^^^^^^^^^^
 
-Write a program to find all words that can be reduced in this way, and
-then find the longest one.
+又是一个来自 Car Talk 的字谜题（ http://www.cartalk.com/content/puzzlers ）：
 
-This exercise is a little more challenging than most, so here are some
-suggestions:
+    如果你每一次从单词中删掉一个字母以后，剩下的字符仍然能构成一个单词，请问世界上符合条件的最长单词是什么？
 
-#. You might want to write a function that takes a word and computes a
-   list of all the words that can be formed by removing one letter.
-   These are the “children” of the word.
+    注意，被删掉的字母可以位于首尾或是中间，但不允许重新去排列剩下的字母。每次移除一个字母后，你会得到一个新单词。这样一直下去，最终你只剩一个字母，并且它也是一个单词——可以在字典中查到。我想知道，符合条件的最长单词是什么？它由多少个字母构成？
 
-#. Recursively, a word is reducible if any of its children are
-   reducible. As a base case, you can consider the empty string
-   reducible.
+    我先给出一个短小的例子：“Sprite”。一开始是 sprite ，我们可以拿掉中间的
+    ‘r’ 从而获得单词 spite，然后拿掉字母 ‘e’ 得到 spit，再去掉 ‘s’，剩下
+    pit，依次操作得到 it，和 I。
 
-#. The wordlist I provided, words.txt, doesn’t contain single letter
-   words. So you might want to add “I”, “a”, and the empty string.
 
-#. To improve the performance of your program, you might want to memoize
-   the words that are known to be reducible.
+编写一个程序，找到所有能够按照这种规则缩减的单词，然后看看其中哪个词最长。
 
-Solution: http://thinkpython2.com/code/reducible.py.
+这道题比大部分的习题都要难，所以我给出一些建议：
+
+#. 你可以写一个函数，接受一个单词，然后计算所有“子词”（即拿掉一个字母后所有可能的新词）组成的列表。
+
+#. 递归地看，如果单词的子词之一也可缩减，那么这个单词也可被缩减。我们可以将空字符串视作也可以缩减，视其为基础情形。
+
+#. 我提供的词汇列表中，并未包含诸如 ‘I’、 ‘a’
+   这样的单个字母词汇，因此，你可能需要加上它们，以及空字符串。
+
+#. 为了提高程序的性能， 你可能需要暂存（memorize）已知可被缩减的单词。
+
+答案： http://thinkpython2.com/code/reducible.py 。
+
+**贡献者**
+^^^^^^^^^^^
+
+#. 翻译：`@SeikaScarlet`_
+#. 校对：`@bingjin`_
+#. 参考：`@carfly`_
+
+.. _@SeikaScarlet: https://github.com/SeikaScarlet
+.. _@bingjin: https://github.com/bingjin
+.. _@carfly: https://github.com/carfly

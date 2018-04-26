@@ -1,177 +1,110 @@
-Debugging
-=========
+第二十章：调试
+=================
 
-When you are debugging, you should distinguish among different kinds of
-errors in order to track them down more quickly:
+在调试时，你应该区别不同类别的错误，才能更快地追踪定位：
 
--  Syntax errors are discovered by the interpreter when it is
-   translating the source code into byte code. They indicate that there
-   is something wrong with the structure of the program. Example:
-   Omitting the colon at the end of a def statement generates the
-   somewhat redundant message SyntaxError: invalid syntax.
+-  语法错误是 Python 将源代码翻译成字节代码的时候产生的，说明程序的结构有一些错误。例如：省略了 ``def`` 语句后面的冒号会产生看上去有点重复的错误信息 ``SyntaxError: invalid syntax`` 。
 
--  Runtime errors are produced by the interpreter if something goes
-   wrong while the program is running. Most runtime error messages
-   include information about where the error occurred and what functions
-   were executing. Example: An infinite recursion eventually causes the
-   runtime error “maximum recursion depth exceeded”.
+-  运行时错误是当程序在运行时出错，解释器所产生的错误。大多数运行时错误会包含诸如错误在哪里产生和正在执行哪个函数等信息。例如：一个无限递归最终会造成 ``maximum recursion depth exceeded`` （“超过递归最大深度”）的运行时错误。
 
--  Semantic errors are problems with a program that runs without
-   producing error messages but doesn’t do the right thing. Example: An
-   expression may not be evaluated in the order you expect, yielding an
-   incorrect result.
+-  语义错误是指一个程序并没有抛出错误信息，但是没有做正确的事情。例如：一个表达式可能因为没有按照你预期的顺序执行，因此产生了错误的结果。
 
-The first step in debugging is to figure out which kind of error you are
-dealing with. Although the following sections are organized by error
-type, some techniques are applicable in more than one situation.
+调试的第一步是弄清楚你正在处理哪种错误。虽然下面的各节是按照错误类型来组织的，有些技巧实际上适用于多种情形。
 
-Syntax errors
+语法错误
 -------------
 
-Syntax errors are usually easy to fix once you figure out what they are.
-Unfortunately, the error messages are often not helpful. The most common
-messages are SyntaxError: invalid syntax and SyntaxError: invalid token,
-neither of which is very informative.
+通常一旦找出是哪种语法错误，就容易修正。不幸的是，抛出的错误消息通常没什么帮助。
+最常见的错误消息是 ``SyntaxError: invalid syntax`` 和 ``SyntaxError: invalid token`` ，都没有提供很多信息。
 
-On the other hand, the message does tell you where in the program the
-problem occurred. Actually, it tells you where Python noticed a problem,
-which is not necessarily where the error is. Sometimes the error is
-prior to the location of the error message, often on the preceding line.
+另一方面，这些错误消息会告诉你程序的哪里出现了错误。实际上，它告诉你 Python 是在哪里发现的问题，但这并一定就是出错的地方。
+有时，错误出现在错误消息出现的位置之前，通常就在前一行。
 
-If you are building the program incrementally, you should have a good
-idea about where the error is. It will be in the last line you added.
+如果你是一点一点地增量式地写的代码，你应该能够知道错误在哪里。一般就在你最后添加的那行代码里。
 
-If you are copying code from a book, start by comparing your code to the
-book’s code very carefully. Check every character. At the same time,
-remember that the book might be wrong, so if you see something that
-looks like a syntax error, it might be.
+如果你是从书上复制的代码，那请仔细地从头和书中的代码对照。一个一个字母地比照。同时，记住也可能是书上就错了，所以如果你发现看上去像语法错误的地方，那可能就是了。
 
-Here are some ways to avoid the most common syntax errors:
+下面是避免大部分常见语法错误的一些方法：
 
-#. Make sure you are not using a Python keyword for a variable name.
+#. 确保你没有使用 Python 的关键字作为变量名称。
 
-#. Check that you have a colon at the end of the header of every
-   compound statement, including for, while, if, and def statements.
+#. 检查你在每个复合语句首行的末尾都加了冒号，包括for，while，if，和 def
+   语句。
 
-#. Make sure that any strings in the code have matching quotation marks.
-   Make sure that all quotation marks are “straight quotes”, not “curly
-   quotes”.
+#. 确保代码中的字符串都有匹配地引号。确保所有的引号都是“直引号”，而不是“花引号”。
 
-#. If you have multiline strings with triple quotes (single or double),
-   make sure you have terminated the string properly. An unterminated
-   string may cause an invalid token error at the end of your program,
-   or it may treat the following part of the program as a string until
-   it comes to the next string. In the second case, it might not produce
-   an error message at all!
+#. 如果你有带三重引号的多行字符串，确保你正确地结束了字符串。一个没有结束的字符串会在
+   程序的末尾产生 ``invalid token`` 错误，或者它会把剩下的程序看作字符串的一部分，直到遇到下一个字符串。第二种情况下，可能根本不会产生错误！
 
-#. An unclosed opening operator—\ ``(``, ``{``, or ``[``—makes Python
-   continue with the next line as part of the current statement.
-   Generally, an error occurs almost immediately in the next line.
+#. 一个没有关闭的操作符（ ``(``， ``{`` 以及 ``[``）使得 Python 把下一行继续看作当前语句的一部分。通常下一行会马上提示错误消息。
 
-#. Check for the classic = instead of == inside a conditional.
+#. 检查条件语句里面的 ``==`` 是不是写成了 ``=`` 。
 
-#. Check the indentation to make sure it lines up the way it is supposed
-   to. Python can handle space and tabs, but if you mix them it can
-   cause problems. The best way to avoid this problem is to use a text
-   editor that knows about Python and generates consistent indentation.
+#. 确保每行的缩进是符合要求。Python 能够处理空格和制表符，但是如果混用则会出错。避免该问题的最好方法是使用一个了解 Python 语法、能够产生一致缩进的纯文本编辑器。
 
-#. If you have non-ASCII characters in the code (including strings and
-   comments), that might cause a problem, although Python 3 usually
-   handles non-ASCII characters. Be careful if you paste in text from a
-   web page or other source.
+#. 如果代码中包含有非ASCII字符串（包括字符串和注释），可能会出错，尽管 Python 3 一般能处理非ASCII字符串。从网页或其他源粘贴文本时，要特别注意。
 
-If nothing works, move on to the next section...
+如果上面的方法都不想，请接着看下一节...
 
-I keep making changes and it makes no difference.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+我不断地改代码，但似乎一点用都没有。
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If the interpreter says there is an error and you don’t see it, that
-might be because you and the interpreter are not looking at the same
-code. Check your programming environment to make sure that the program
-you are editing is the one Python is trying to run.
+如果解释器说有一个错误但是你怎么也看不出来，可能是因为你和解释器看的不是同一个代码。检查你的编码环境，确保你正在编辑的就是Python试图要运行的程序。
 
-If you are not sure, try putting an obvious and deliberate syntax error
-at the beginning of the program. Now run it again. If the interpreter
-doesn’t find the new error, you are not running the new code.
+如果你不确定，试着在程序开始时制造一些明显、故意的语法错误。再运行一次。如果解释器没有提示新错误，说明你没有运行新修改的代码。
 
-There are a few likely culprits:
+有可能是以下原因：
 
--  You edited the file and forgot to save the changes before running it
-   again. Some programming environments do this for you, but some don’t.
+-  你编辑了文件，但是忘记了在运行之前保存。有一些编程环境会在运行前自动保存，有些则
+   不会。
 
--  You changed the name of the file, but you are still running the old
-   name.
+-  你更改了文件的名称，但是你仍然在运行旧名称的文件。
 
--  Something in your development environment is configured incorrectly.
+-  开发环境的配置不正确。
 
--  If you are writing a module and using import, make sure you don’t
-   give your module the same name as one of the standard Python modules.
+-  如果你在编写一个模块，使用了 ``import`` 语句，确保你没有使用标准 Python 模块的名称作为模块名。
 
--  If you are using import to read a module, remember that you have to
-   restart the interpreter or use reload to read a modified file. If you
-   import the module again, it doesn’t do anything.
+-  如果你使用 ``import`` 来载入一个模块，记住你必须重启解释器或者使用 ``reload`` 才能重新载入一个修改了的文件。如果你导入一个模块两次，第二次是无效的。
 
-If you get stuck and you can’t figure out what is going on, one approach
-is to start again with a new program like “Hello, World!”, and make sure
-you can get a known program to run. Then gradually add the pieces of the
-original program to the new one.
+如果你依然解决不了问题，不知道究竟是怎么回事，有一种办法是从一个类似“Hello,
+World!”这样的程序重头开始，确保你能运行一个已知的程序。然后逐渐地把原来程序的代码粘贴到新的程序中。
 
-Runtime errors
+运行时错误
 --------------
 
-Once your program is syntactically correct, Python can read it and at
-least start running it. What could possibly go wrong?
+一旦你的程序语法正确，Python 就能够编译它，至少可以正常运行它。接下来，可能会出现哪些错误？
 
-My program does absolutely nothing.
+我的程序什么也没有做。
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This problem is most common when your file consists of functions and
-classes but does not actually invoke a function to start execution. This
-may be intentional if you only plan to import this module to supply
-classes and functions.
+在文件由函数和类组成，但并没有实际调用函数执行时，这个问题是最常见的。你也可能是故意这么做的，因为你只打算导入该模块，用于提供类和函数。
 
-If it is not intentional, make sure there is a function call in the
-program, and make sure the flow of execution reaches it (see “Flow of
-Execution” below).
+如果你不是故意的，确保你调用了一个函数来开始执行，请确保执行流能够走到函数调用处（参见下面“执行流”一节）。
 
-My program hangs.
+我的程序挂死了。
 ~~~~~~~~~~~~~~~~~
 
-If a program stops and seems to be doing nothing, it is “hanging”. Often
-that means that it is caught in an infinite loop or infinite recursion.
+如果一个程序停止了，看起来什么都没有做，这就是“挂死”了。通常这意味着它陷入了无限循环或者是无限递归。
 
--  If there is a particular loop that you suspect is the problem, add a
-   print statement immediately before the loop that says “entering the
-   loop” and another immediately after that says “exiting the loop”.
+-  如果你怀疑问题出在某个循环，在该循环之前添加一个打印语句，输出“进入循环”，在循环之后添加一个打印“退出循环”的语句。
+ 
+   运行程序。如果打印了第一条，但没有打印第二条，那就是进入了无线循环。跳到下面“无限循环”一节。
 
-   Run the program. If you get the first message and not the second,
-   you’ve got an infinite loop. Go to the “Infinite Loop” section below.
+-  大多数情况下，无限递归会造成程序运行一会儿之后输出“RuntimeError:
+   Maximum recursion depth exceeded”错误。如果发生了这个错误，跳到下面“无限递归”一节。
 
--  Most of the time, an infinite recursion will cause the program to run
-   for a while and then produce a “RuntimeError: Maximum recursion depth
-   exceeded” error. If that happens, go to the “Infinite Recursion”
-   section below.
+   如果没有出现这个错误，但你怀疑某个递归方法或函数有问题，你仍可以使用“无线递归”一节中的技巧。
 
-   If you are not getting this error but you suspect there is a problem
-   with a recursive method or function, you can still use the techniques
-   in the “Infinite Recursion” section.
+-  如果上面两种方法都没用，开始测试其他的循环和递归函数或方法是否存在问题。
 
--  If neither of those steps works, start testing other loops and other
-   recursive functions and methods.
+-  如果这也没有用，那有可能你没有弄懂程序的执行流。跳到下面“执行流”一节。
 
--  If that doesn’t work, then it is possible that you don’t understand
-   the flow of execution in your program. Go to the “Flow of Execution”
-   section below.
-
-Infinite Loop
+无限循环
 ^^^^^^^^^^^^^
 
-If you think you have an infinite loop and you think you know what loop
-is causing the problem, add a print statement at the end of the loop
-that prints the values of the variables in the condition and the value
-of the condition.
+如果你认为程序中有一个无限循环，并且知道是哪一个循环，在循环的最后添加一个打印语句，打印条件中各个变量的值，以及该条件的值。
 
-For example:
+例如：
 
 ::
 
@@ -183,206 +116,128 @@ For example:
         print('y: ', y)
         print("condition: ", (x > 0 and y < 0))
 
-Now when you run the program, you will see three lines of output for
-each time through the loop. The last time through the loop, the
-condition should be False. If the loop keeps going, you will be able to
-see the values of x and y, and you might figure out why they are not
-being updated correctly.
+现在，当你运行程序时，你可以看到每次循环都有3行输出。最后一次循环时，循环条件应该
+是 ``False`` 。如果循环继续走下去，你能够看到 x 和 y 的值，这时你或许能弄清楚到为什么它们的值没有被正确地更新。
 
-Infinite Recursion
+无限递归
 ^^^^^^^^^^^^^^^^^^
 
-Most of the time, infinite recursion causes the program to run for a
-while and then produce a Maximum recursion depth exceeded error.
+大多数情况，无限递归会造成程序运行一会儿之后输出“RuntimeError:
+Maximum recursion depth exceeded”错误。
 
-If you suspect that a function is causing an infinite recursion, make
-sure that there is a base case. There should be some condition that
-causes the function to return without making a recursive invocation. If
-not, you need to rethink the algorithm and identify a base case.
+如果你怀疑一个函数造成了无限递归，确保函数有一个基础情形。也就是存在某种条件能够让函数直接返回值，而不会再递归调用下去。如果没有，你需要重新思考算法，找到一个初始条件。
 
-If there is a base case but the program doesn’t seem to be reaching it,
-add a print statement at the beginning of the function that prints the
-parameters. Now when you run the program, you will see a few lines of
-output every time the function is invoked, and you will see the
-parameter values. If the parameters are not moving toward the base case,
-you will get some ideas about why not.
+如果有了基础情形了但是程序还是没有到达它，在函数的开头加入一个打印语句来打印参数。
+现在当你运行程序时，每次递归调用你都能看到几行输出，你可以看到参数的值。
+如果参数没有趋于基础情形，你会大致明白其背后的原因。
 
-Flow of Execution
+执行流
 ^^^^^^^^^^^^^^^^^
 
-If you are not sure how the flow of execution is moving through your
-program, add print statements to the beginning of each function with a
-message like “entering function foo”, where foo is the name of the
-function.
+如果你不确定程序执行的过程，在每个函数的开始处添加打印语句，打印类似“进入函数foo”这样的信息，foo是你的函数名。
 
-Now when you run the program, it will print a trace of each function as
-it is invoked.
+现在运行程序时，就会打印出每个函数调用的轨迹。
 
-When I run the program I get an exception.
+运行程序时产生了异常。
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If something goes wrong during runtime, Python prints a message that
-includes the name of the exception, the line of the program where the
-problem occurred, and a traceback.
+如果在运行时出现了问题，Python会打印出一些信息，包括异常的名称、产生异常的行号
+和一个回溯（traceback）。
 
-The traceback identifies the function that is currently running, and
-then the function that called it, and then the function that called
-*that*, and so on. In other words, it traces the sequence of function
-calls that got you to where you are, including the line number in your
-file where each call occurred.
+回溯会指出正在运行的函数、调用它的上层函数以及上上层函数等等。换言之，它追踪进行到目前函数调用所调用过的函数，包括每次函数的调用所在的行号。
 
-The first step is to examine the place in the program where the error
-occurred and see if you can figure out what happened. These are some of
-the most common runtime errors:
+第一步是检查程序中发生错误的位置，看你能不能找出问题所在。下面是一些常见的运行时错误：
 
-NameError:
-    You are trying to use a variable that doesn’t exist in the current
-    environment. Check if the name is spelled right, or at least
-    consistently. And remember that local variables are local; you
-    cannot refer to them from outside the function where they are
-    defined.
+命名错误（NameError）：
 
-TypeError:
-    There are several possible causes:
+    你正在使用当前环境中不存在的变量名。检查下名称是否拼写正确，或者名称前后是否一致。还要记住局部变量是局部的。你不能在定义它们的函数的外面引用它们。
 
-    -  You are trying to use a value improperly. Example: indexing a
-       string, list, or tuple with something other than an integer.
+类型错误（TypeError）：
 
-    -  There is a mismatch between the items in a format string and the
-       items passed for conversion. This can happen if either the number
-       of items does not match or an invalid conversion is called for.
+    有几种可能的原因：
 
-    -  You are passing the wrong number of arguments to a function. For
-       methods, look at the method definition and check that the first
-       parameter is self. Then look at the method invocation; make sure
-       you are invoking the method on an object with the right type and
-       providing the other arguments correctly.
+    -  值的使用方法不对。例如：使用除整数以外的东西作为字符串、列表或元组的索引下标。
+    
+    -  格式化字符串中的项与传入用于转换的项之间不匹配。如果项的数量不同或是调用了无效的转换，都会出现这个问题。
+       
+    -  传递给函数的参数数量不对。如果是方法，查看方法定义是不是以 ``self`` 作为第一个参数。然后检查方法调用；确保你在一个正确的类型的对象上调用方法，并且正确地提供了其它参数。
 
-KeyError:
-    You are trying to access an element of a dictionary using a key that
-    the dictionary does not contain. If the keys are strings, remember
-    that capitalization matters.
+键错误（KeyError）：
 
-AttributeError:
-    You are trying to access an attribute or method that does not exist.
-    Check the spelling! You can use the built-in function vars to list
-    the attributes that do exist.
+   你尝试用字典没有的键来访问字典的元素。如果键是字符串，记住它是区分大小写的。
 
-    If an AttributeError indicates that an object has NoneType, that
-    means that it is None. So the problem is not the attribute name, but
-    the object.
+属性错误（AttributeError）：
 
-    The reason the object is none might be that you forgot to return a
-    value from a function; if you get to the end of a function without
-    hitting a return statement, it returns None. Another common cause is
-    using the result from a list method, like sort, that returns None.
+    你尝试访问一个不存在的属性或方法。检查一下拼写！你可以使用内建函数 ``dir`` 来列出存在的属性。
 
-IndexError:
-    The index you are using to access a list, string, or tuple is
-    greater than its length minus one. Immediately before the site of
-    the error, add a print statement to display the value of the index
-    and the length of the array. Is the array the right size? Is the
-    index the right value?
+    如果一个属性错误表明一个对象是 ``NoneType`` ，那意味着它就是 ``None`` 。因此问题不在于属性名，而在于对象本身。
 
-The Python debugger (pdb) is useful for tracking down exceptions because
-it allows you to examine the state of the program immediately before the
-error. You can read about pdb at
-https://docs.python.org/3/library/pdb.html.
+    对象是 ``None`` 的一个可能原因，是你忘记从函数返回一个值；如果程序执行到函数的末尾没有碰到 ``return`` 语句，它就会返回 ``None`` 。另一个常见的原因是使用了列表方法的结果，如 ``sort`` ，这种方法返回的是 ``None`` 。
 
-I added so many print statements I get inundated with output.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+索引错误（IndexError）：
 
-One of the problems with using print statements for debugging is that
-you can end up buried in output. There are two ways to proceed: simplify
-the output or simplify the program.
+    用来访问列表、字符串或元组的索引要大于访问对象长度减一。在错误之处的前面加上一个打印语句，打印出索引的值和数组的长度。数组的大小是否正确？索引值是否正确？
 
-To simplify the output, you can remove or comment out print statements
-that aren’t helping, or combine them, or format the output so it is
-easier to understand.
+Python 调试器
+(pdb)有助于追踪异常，因为它可以让你检查程序出现错误之前的状态。你可以阅读 https://docs.python.org/3/library/pdb.html 了解更多关于 pdb 的细节。
 
-To simplify the program, there are several things you can do. First,
-scale down the problem the program is working on. For example, if you
-are searching a list, search a *small* list. If the program takes input
-from the user, give it the simplest input that causes the problem.
 
-Second, clean up the program. Remove dead code and reorganize the
-program to make it as easy to read as possible. For example, if you
-suspect that the problem is in a deeply nested part of the program, try
-rewriting that part with simpler structure. If you suspect a large
-function, try splitting it into smaller functions and testing them
-separately.
 
-Often the process of finding the minimal test case leads you to the bug.
-If you find that a program works in one situation but not in another,
-that gives you a clue about what is going on.
+我加入了太多的打印语句以至于输出刷屏。
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Similarly, rewriting a piece of code can help you find subtle bugs. If
-you make a change that you think shouldn’t affect the program, and it
-does, that can tip you off.
+使用打印语句来调试的一个问题，是你可能会被泛滥的输出所埋没。有两种途径来处理：简化输出或者是简化程序。
 
-Semantic errors
+为了简化输出，你可以移除或注释掉不再需要的打印语句，或者合并它们，或者格式化输出便于理解。
+
+为了简化程序，有几件事情可以做的。首先，缩减当前求解问题的规模。例如，如果你在检索一个列表，使用一个 **小** 列表来检索。如果程序从用户获得输入，给一个会造成问题的最简单的输入。
+
+其次，清理程序。移除死代码，并且重新组织程序使其易于理解。例如，如果你怀疑问题来自程序深度嵌套的部分，尝试使用简单的结构重写它。如果你怀疑是一个大函数的问题，尝试分解它为小函数并分别测试。
+
+通常，寻找最小化测试用例的过程能够引出bug。如果你发现一个程序在一种条件下运行正
+确，在另外的条件下运行不正确，这能够给你提供一些解决问题的线索。
+
+类似的，重写代码能够让你发现难找的bug。如果你做了一处改变，认为不会影响程序但是却事实证明相反，这也可以给你线索。
+
+语义错误
 ---------------
 
-In some ways, semantic errors are the hardest to debug, because the
-interpreter provides no information about what is wrong. Only you know
-what the program is supposed to do.
+在某些程度上，语义错误是最难调试的，因为解释器不能提供错误的信息。只有你知道程序本来应该是怎么样做的。
 
-The first step is to make a connection between the program text and the
-behavior you are seeing. You need a hypothesis about what the program is
-actually doing. One of the things that makes that hard is that computers
-run so fast.
+第一步是在程序代码和你看到的表现之间建立连接。你需要首先假设程序实际上干了什么事情。这种调试的难处之一，是电脑运行的太快了。
 
-You will often wish that you could slow the program down to human speed,
-and with some debuggers you can. But the time it takes to insert a few
-well-placed print statements is often short compared to setting up the
-debugger, inserting and removing breakpoints, and “stepping” the program
-to where the error is occurring.
+你会经常希望程序能够慢下来好让你能跟上它的速度，通过一些调试器(debugger)就能做到这点。但是有时候，插入一些安排好位置的打印语句所需的时间，要比你设置好调试器、插入和移除断点，然后“步进”程序到发生错误的地方要短。
 
-My program doesn’t work.
+我的程序不能工作。
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-You should ask yourself these questions:
+你应该问自己下面这些问题：
 
--  Is there something the program was supposed to do but which doesn’t
-   seem to be happening? Find the section of the code that performs that
-   function and make sure it is executing when you think it should.
+-  是不是有你希望程序完成的但是并没有出现的东西？找到执行这个功能的代码，确保它是按照你认为的方式工作的。
 
--  Is something happening that shouldn’t? Find code in your program that
-   performs that function and see if it is executing when it shouldn’t.
+-  是不是有些本不该执行的代码却运行了？找到程序中执行这个功能的代码，然后看看它是不是本不应该执行却执行了。
 
--  Is a section of code producing an effect that is not what you
-   expected? Make sure that you understand the code in question,
-   especially if it involves functions or methods in other Python
-   modules. Read the documentation for the functions you call. Try them
-   out by writing simple test cases and checking the results.
+-  是不是有一些代码的效果和你预期的不一样？确保你理解了那部分的代码，特别是当它涉及调用其它模块的函数或者方法。阅读你调用的函数的文档。尝试写一些简单的测试用例，来测试他们是不是得到了正确的结果。
 
-In order to program, you need a mental model of how programs work. If
-you write a program that doesn’t do what you expect, often the problem
-is not in the program; it’s in your mental model.
+在编程之前，你需要先建立程序是怎样工作的思维模型。如果你写出来的代码并非按照你预期的工作，问题经常不是在程序本身，而是你的思维模型。
 
-The best way to correct your mental model is to break the program into
-its components (usually the functions and methods) and test each
-component independently. Once you find the discrepancy between your
-model and reality, you can solve the problem.
+纠正思维模型最好的方，是把程序切分成组件（就是通常的函数和方法），然后单独测试每个组件。
+一旦你找到了模型和现实的不符之处，你就能解决问题了。
 
-Of course, you should be building and testing components as you develop
-the program. If you encounter a problem, there should be only a small
-amount of new code that is not known to be correct.
+当然，你应该在写代码的过程中就编写和测试组件。如果你遇到了一个问题，那只能是刚写的一小段代码才有可能出问题。
 
-I’ve got a big hairy expression and it doesn’t do what I expect.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+我写了一个超大的密密麻麻的表达式，结果它运行得不正确。
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Writing complex expressions is fine as long as they are readable, but
-they can be hard to debug. It is often a good idea to break a complex
-expression into a series of assignments to temporary variables.
+写复杂的表达式是没有问题的，前提是可读，但是它们很难调试。通常把复杂的表达式打散成一系列临时变量的赋值语句，是一个好做法。
 
-For example:
+例如：
 
 ::
 
     self.hands[i].addCard(self.hands[self.findNeighbor(i)].popCard())
 
-This can be rewritten as:
+这可以重写成：
 
 ::
 
@@ -390,110 +245,89 @@ This can be rewritten as:
     pickedCard = self.hands[neighbor].popCard()
     self.hands[i].addCard(pickedCard)
 
-The explicit version is easier to read because the variable names
-provide additional documentation, and it is easier to debug because you
-can check the types of the intermediate variables and display their
-values.
+显示的版本更容易读，因为变量名提供了额外的信息，也更容易调试，因为你可以检查中间变量的类型和值。
 
-Another problem that can occur with big expressions is that the order of
-evaluation may not be what you expect. For example, if you are
-translating the expression :math:`\frac{x}{2 \pi}` into Python, you
-might write:
+超长表达式的另外一个问题是，计算顺序可能和你想得不一样。例如如果你把\ :math:`\frac{x}{2 \pi}`\ 翻译成 Python 代码，你可能会写成：
 
 ::
 
     y = x / 2 * math.pi
 
-That is not correct because multiplication and division have the same
-precedence and are evaluated from left to right. So this expression
-computes :math:`x \pi / 2`.
+这就不正确了，因为乘法和除法具有相同的优先级，所以它们从左到右进行计算。所以表达式计算的是\ :math:`x \pi / 2`\ 。
 
-A good way to debug expressions is to add parentheses to make the order
-of evaluation explicit:
+调试表达式的一个好办法，是添加括号来显式地指定计算顺序：
 
 ::
 
      y = x / (2 * math.pi)
 
-Whenever you are not sure of the order of evaluation, use parentheses.
-Not only will the program be correct (in the sense of doing what you
-intended), it will also be more readable for other people who haven’t
-memorized the order of operations.
+只要你不太确定计算的顺序，就用括号。这样不仅能确保程序正确（按照你认为的方式工
+作），而且对于那些记不住优先级的人来说更加易读。
 
-I’ve got a function that doesn’t return what I expect.
+有一个函数没有返回我期望的结果。
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you have a return statement with a complex expression, you don’t have
-a chance to print the result before returning. Again, you can use a
-temporary variable. For example, instead of:
+如果你的 ``return`` 语句是一个复杂的表达式，你没有机会在返回之前打印出计算的结果。
+不过，你可以用一个临时变量。例如，与其这样写：
 
 ::
 
     return self.hands[i].removeMatches()
 
-you could write:
+不如写成：
 
 ::
 
     count = self.hands[i].removeMatches()
     return count
 
-Now you have the opportunity to display the value of count before
-returning.
+现在，你就有机会在返回之前显示 ``count`` 的值了。
 
-I’m really, really stuck and I need help.
+我真的是没办法了，我需要帮助。
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-First, try getting away from the computer for a few minutes. Computers
-emit waves that affect the brain, causing these symptoms:
+首先，离开电脑几分钟吧。电脑发出的辐射会影响大脑，容易造成以下症状：
 
--  Frustration and rage.
+-  焦躁易怒
 
--  Superstitious beliefs (“the computer hates me”) and magical thinking
-   (“the program only works when I wear my hat backward”).
+-  迷信(“电脑就是和我作对”)和幻想(“只有我反着带帽子程序才会正常工作”)。
 
--  Random walk programming (the attempt to program by writing every
-   possible program and choosing the one that does the right thing).
+-  随机漫步编程（试图编写所有可能的程序，选择做了正确的事情的那个程序）。
 
-If you find yourself suffering from any of these symptoms, get up and go
-for a walk. When you are calm, think about the program. What is it
-doing? What are some possible causes of that behavior? When was the last
-time you had a working program, and what did you do next?
+如果你发现你自己出现上述的症状，起身走动走动。当你冷静之后，再想想程序。它在做什么？它异常表现的一些可能的原因是什么？上次代码正确运行时什么时候，你接下来做了什么？
 
-Sometimes it just takes time to find a bug. I often find bugs when I am
-away from the computer and let my mind wander. Some of the best places
-to find bugs are trains, showers, and in bed, just before you fall
-asleep.
+有时，找到一个bug就是需要花很长的时间。我经常都是在远离电脑、让我的思绪飞扬时才找到bug的。
+一些寻找bug的绝佳地点是火车上、洗澡时、入睡之前在床上。
 
-No, I really need help.
-~~~~~~~~~~~~~~~~~~~~~~~
 
-It happens. Even the best programmers occasionally get stuck. Sometimes
-you work on a program so long that you can’t see the error. You need a
-fresh pair of eyes.
+我不干了，我真的需要帮助。
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Before you bring someone else in, make sure you are prepared. Your
-program should be as simple as possible, and you should be working on
-the smallest input that causes the error. You should have print
-statements in the appropriate places (and the output they produce should
-be comprehensible). You should understand the problem well enough to
-describe it concisely.
+这个经常发生。就算是最好的程序员也偶尔被难住。
+有时你在一个程序上工作的时间太长了，以至于你看不到错误。那你该是休息一下双眼了。
 
-When you bring someone in to help, be sure to give them the information
-they need:
+当你拉某人来帮忙之前，确保你已经准备好了。你的程序应该尽量简单，你应该应对造成错误的最小输入。你应该在合适的地方添加打印语句（打印输出应该容易理解）。你应该对程序足够理解，能够简洁地对其进行描述。
 
--  If there is an error message, what is it and what part of the program
-   does it indicate?
+当你拉某人来帮忙时，确保提供他们需要的信息：
 
--  What was the last thing you did before this error occurred? What were
-   the last lines of code that you wrote, or what is the new test case
-   that fails?
+-  如果有错误信息，它是什么以及它指出程序的错误在哪里？
 
--  What have you tried so far, and what have you learned?
+-  在这个错误发生之前你最后做的事情是什么？你写的最后一行代码是什么，或者失败的新
+   的测试样例是怎样的？
 
-When you find the bug, take a second to think about what you could have
-done to find it faster. Next time you see something similar, you will be
-able to find the bug more quickly.
+-  你至今都尝试了哪些方法，你了解到了什么？
 
-Remember, the goal is not just to make the program work. The goal is to
-learn how to make the program work.
+你找到了bug之后，想想你要怎样才能更快的找到它。下次你看到相似的情况时，你就可以更快的找到bug了。
+
+记住，最终目标不是让程序工作，而是学习如何让程序正确工作。
+
+**贡献者**
+^^^^^^^^^^^
+
+#. 翻译：`@bingjin`_
+#. 校对：`@bingjin`_
+#. 参考：`@carfly`_
+
+.. _@bingjin: https://github.com/bingjin
+.. _@bingjin: https://github.com/bingjin
+.. _@carfly: https://github.com/carfly

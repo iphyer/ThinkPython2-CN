@@ -1,23 +1,14 @@
-The Goodies
-===========
+第十九章：进阶小技巧
+========================
 
-One of my goals for this book has been to teach you as little Python as
-possible. When there were two ways to do something, I picked one and
-avoided mentioning the other. Or sometimes I put the second one into an
-exercise.
+我在写这本书时的一个目标，就是尽量少教些Python。如果有两种实现方法，我会挑其中之一讲解，避免再提另一种方法。有时候可能会将第二种方法放在练习题里。
 
-Now I want to go back for some of the good bits that got left behind.
-Python provides a number of features that are not really necessary—you
-can write good code without them—but with them you can sometimes write
-code that’s more concise, readable or efficient, and sometimes all
-three.
+现在我想回过头来讲一些之前没有涉及的内容。Python提供的特性中，有一些其实并不是必须的——没有它们你也能写出好的代码——但是有了它们之后，有时候你能写出更简洁、可读性更高或者效率更高的代码，有时候甚至三个好处都有。
 
-Conditional expressions
+条件表达式
 -----------------------
 
-We saw conditional statements in Section [conditional.execution].
-Conditional statements are often used to choose one of two values; for
-example:
+在\ :ref:`conditional.execution`\ 一节中，我们学习了条件语句。条件语句通常用于在两个值之间进行二选一；例如：
 
 ::
 
@@ -26,23 +17,18 @@ example:
     else:
         y = float('nan')
 
-This statement checks whether x is positive. If so, it computes
-math.log. If not, math.log would raise a ValueError. To avoid stopping
-the program, we generate a “NaN”, which is a special floating-point
-value that represents “Not a Number”.
+这个语句检测 ``x`` 是否是正值。如果是，它将计算它的 ``math.log`` 。如果不是，``math.log`` 会抛出 ``ValueError`` 。为了避免程序出错，我们生成一个 “NaN”，这是一个代表“非数字”的特殊浮点值。
 
-We can write this statement more concisely using a **conditional
-expression**:
+我们可以使用 **条件表达式** 简化这个语句：
 
 ::
 
     y = math.log(x) if x > 0 else float('nan')
 
-You can almost read this line like English: “y gets log-x if x is
-greater than 0; otherwise it gets NaN”.
+这条语句读起来很像英语：“y gets log-x if x is
+greater than 0; otherwise it gets NaN”（如果 x 大于 0，y 的值则是 x 的 log；否则 y 的值为 NaN ）。
 
-Recursive functions can sometimes be rewritten using conditional
-expressions. For example, here is a recursive version of factorial:
+有时候也可以使用条件表达式改写递归函数。例如，下面是阶乘函数的递归版本：
 
 ::
 
@@ -52,16 +38,14 @@ expressions. For example, here is a recursive version of factorial:
         else:
             return n * factorial(n-1)
 
-We can rewrite it like this:
+我们可以像这样重写：
 
 ::
 
     def factorial(n):
         return 1 if n == 0 else n * factorial(n-1)
 
-Another use of conditional expressions is handling optional arguments.
-For example, here is the init method from GoodKangaroo (see
-Exercise [kangaroo]):
+条件表达式的另一个用处是处理可选参数。例如，下面是\ :ref:`kangaroo`\ 中 ``GoodKangaroo`` 类的 init 方法：
 
 ::
 
@@ -71,24 +55,20 @@ Exercise [kangaroo]):
                 contents = []
             self.pouch_contents = contents
 
-We can rewrite this one like this:
+我们可以像这样重写：
 
 ::
 
         def __init__(self, name, contents=None):
             self.name = name
-            self.pouch_contents = [] if contents == None else contents 
+            self.pouch_contents = [] if contents == None else contents
 
-In general, you can replace a conditional statement with a conditional
-expression if both branches contain simple expressions that are either
-returned or assigned to the same variable.
+一般来说，如果条件语句的两个分支中均为简单的表达式，不是被返回就是被赋值给相同的变量，那么你可以用条件表达式替换调该条件语句。
 
-List comprehensions
+列表推导式
 -------------------
 
-In Section [filter] we saw the map and filter patterns. For example,
-this function takes a list of strings, maps the string method capitalize
-to the elements, and returns a new list of strings:
+在\ :ref:`filter`\ 一节中，我们学习了映射和筛选模式。例如，下面这个函数接受一个字符串列表，将字符串方法 ``capitalize`` 映射至元素，并返回一个新的字符串列表：
 
 ::
 
@@ -98,24 +78,18 @@ to the elements, and returns a new list of strings:
             res.append(s.capitalize())
         return res
 
-We can write this more concisely using a **list comprehension**:
+我们可以使用 **列表推导式** 简化该函数：
 
 ::
 
     def capitalize_all(t):
         return [s.capitalize() for s in t]
 
-The bracket operators indicate that we are constructing a new list. The
-expression inside the brackets specifies the elements of the list, and
-the for clause indicates what sequence we are traversing.
+方括号操作符表示，我们正在构造一个新列表。方括号中的表达式指定列表中的元素，``for`` 子句表示我们要遍历的序列。
 
-The syntax of a list comprehension is a little awkward because the loop
-variable, s in this example, appears in the expression before we get to
-the definition.
+列表推导式的语法有点奇怪，因为此例中的循环变量 ``s`` 在定义之前就出现了。
 
-List comprehensions can also be used for filtering. For example, this
-function selects only the elements of t that are upper case, and returns
-a new list:
+列表推导式也可以用于筛选。例如，这个函数只选择 ``t`` 中为大写的元素，并返回一个新列表：
 
 ::
 
@@ -126,28 +100,21 @@ a new list:
                 res.append(s)
         return res
 
-We can rewrite it using a list comprehension
+我们可以使用列表推导式重写这个函数：
 
 ::
 
     def only_upper(t):
         return [s for s in t if s.isupper()]
 
-List comprehensions are concise and easy to read, at least for simple
-expressions. And they are usually faster than the equivalent for loops,
-sometimes much faster. So if you are mad at me for not mentioning them
-earlier, I understand.
+列表推导式非常简洁、易读，至少对简单的表达式是这样的。而且通常比对应的 for 循环要更快，有时要快很多。所以，如果你恨我之前没介绍，我可以理解。
 
-But, in my defense, list comprehensions are harder to debug because you
-can’t put a print statement inside the loop. I suggest that you use them
-only if the computation is simple enough that you are likely to get it
-right the first time. And for beginners that means never.
+但是，我这么做也是有原因的，列表推导式的调试难度更大，因为你不能在循环中添加打印语句。我建议你只在计算足够简单、第一次就能写出正确代码的前提下使用。不过对初学来说，第一次就写对几乎不可能。
 
-Generator expressions
+生成器表达式
 ---------------------
 
-**Generator expressions** are similar to list comprehensions, but with
-parentheses instead of square brackets:
+\ **生成器表达式**\ 与列表推导式类似，但是使用的是圆括号，而不是方括号：
 
 ::
 
@@ -155,10 +122,7 @@ parentheses instead of square brackets:
     >>> g
     <generator object <genexpr> at 0x7f4c45a786c0>
 
-The result is a generator object that knows how to iterate through a
-sequence of values. But unlike a list comprehension, it does not compute
-the values all at once; it waits to be asked. The built-in function next
-gets the next value from the generator:
+结果是一个表达式对象，该对象知道如何遍历一个值序列。但与列举推导式不同的是，它不会一次性计算出所有的值；而是等待求值请求。内建函数 ``next`` 从生成器获取下一个值：
 
 ::
 
@@ -167,8 +131,7 @@ gets the next value from the generator:
     >>> next(g)
     1
 
-When you get to the end of the sequence, next raises a StopIteration
-exception. You can also use a for loop to iterate through the values:
+抵达序列的末尾时，``next`` 会抛出 ``StopIteration`` 异常。你还可以使用 for 循环遍历这些值：
 
 ::
 
@@ -178,71 +141,56 @@ exception. You can also use a for loop to iterate through the values:
     9
     16
 
-The generator object keeps track of where it is in the sequence, so the
-for loop picks up where next left off. Once the generator is exhausted,
-it continues to raise StopException:
+生成器对象会记录其在序列中的位置，因此 for 循环是从 next 结束的地方开始的。一旦生成器被消耗完，它会抛出 ``StopException`` 。
 
 ::
 
     >>> next(g)
     StopIteration
 
-Generator expressions are often used with functions like sum, max, and
-min:
+生成器表达式常与 ``sum`` 、``max`` 和 ``min`` 等函数一起使用：
 
 ::
 
     >>> sum(x**2 for x in range(5))
     30
 
-any and all
+any 和 all
 -----------
 
-Python provides a built-in function, any, that takes a sequence of
-boolean values and returns True if any of the values are True. It works
-on lists:
+Python提供了一个内建函数 ``any``，它接受一个布尔值序列，如果其中有任意一个值为 ``True`` 则返回 ``True`` 。它也适用于列表：
 
 ::
 
     >>> any([False, False, True])
     True
 
-But it is often used with generator expressions:
+但是它通常用于生成器表达式：
 
 ::
 
     >>> any(letter == 't' for letter in 'monty')
     True
 
-That example isn’t very useful because it does the same thing as the in
-operator. But we could use any to rewrite some of the search functions
-we wrote in Section [search]. For example, we could write avoids like
-this:
+上面这个例子不是很有用，因为它的功能和 in 操作符一样。但是我们可以使用 ``any`` 重写\ :ref:`search2`\ 一节中的部分搜索函数。例如，我们可以像这样编写 ``avoids`` 函数：
 
 ::
 
     def avoids(word, forbidden):
         return not any(letter in forbidden for letter in word)
 
-The function almost reads like English, “word avoids forbidden if there
-are not any forbidden letters in word.”
+上面的函数读取来和英语没什么区别：“word avoids forbidden if there
+are not any forbidden letters in word.”（如果某个词中没有任何禁用字母，那么该词就算避免了使用禁用词。）
 
-Using any with a generator expression is efficient because it stops
-immediately if it finds a True value, so it doesn’t have to evaluate the
-whole sequence.
+将 ``any`` 与生成器表达式结合使用的效率较高，因为它只要一遇到真值就会终止，所以不会对整个序列进行计算。
 
-Python provides another built-in function, all, that returns True if
-every element of the sequence is True. As an exercise, use all to
-re-write ``uses_all`` from Section [search].
+Python还提供了另一个内建函数 ``all``，如果序列中的每个元素均为 ``True`` 才会返回 ``True`` 。我们做个练习，使用 ``all`` 重写\ :ref:`search2`\ 一节中 ``uses_all`` 函数。
 
-Sets
-----
 
-In Section [dictsub] I use dictionaries to find the words that appear in
-a document but not in a word list. The function I wrote takes d1, which
-contains the words from the document as keys, and d2, which contains the
-list of words. It returns a dictionary that contains the keys from d1
-that are not in d2.
+集合
+--------
+
+在\ :ref:`dictsub`\ 一节中，我使用字典对那些在文档中但不在单词列表里的单词进行了查找。我写的那个函数接受参数 ``d1`` 和 ``d2`` ，分别包含文档中的单词（作为键使用）和单词列表。它返回不在 ``d2`` 中但在 ``d1`` 里的键组成的字典。
 
 ::
 
@@ -253,28 +201,20 @@ that are not in d2.
                 res[key] = None
         return res
 
-In all of these dictionaries, the values are None because we never use
-them. As a result, we waste some storage space.
+在上面的字典中，所有键的值均为 ``None`` ，因为我们不会使用这些值。后果就是会浪费一些存储空间。
 
-Python provides another built-in type, called a set, that behaves like a
-collection of dictionary keys with no values. Adding elements to a set
-is fast; so is checking membership. And sets provide methods and
-operators to compute common set operations.
+Python提供了另一个叫做集合的内建类型，它的行为类似没有值的字典键集合。往集合中添加元素是非常快的；成员关系检测也很快。另外，集合还提供了计算常见集合操作的方法和操作符。
 
-For example, set subtraction is available as a method called difference
-or as an operator, -. So we can rewrite subtract like this:
+例如，集合差集就有一个对应的 ``difference`` 方法，或者操作符 ``-``。因此，我们可以这样重写 ``subtract`` 函数：
 
 ::
 
     def subtract(d1, d2):
         return set(d1) - set(d2)
 
-The result is a set instead of a dictionary, but for operations like
-iteration, the behavior is the same.
+结果是一个集合，而不是字典，但对于像迭代这样的操作而言，二者是没有区别的。
 
-Some of the exercises in this book can be done concisely and efficiently
-with sets. For example, here is a solution to ``has_duplicates``, from
-Exercise [duplicate], that uses a dictionary:
+如果使用集合来完成本书中的部分练习题，代码会比较简洁、高效。例如，下面是\ :ref:`exercise10-7`\ 中 ``has_duplicates`` 函数的一种使用字典的实现：
 
 ::
 
@@ -286,57 +226,45 @@ Exercise [duplicate], that uses a dictionary:
             d[x] = True
         return False
 
-When an element appears for the first time, it is added to the
-dictionary. If the same element appears again, the function returns
-True.
+当某个元素首次出现时，它被添加至字典中。如果同样的元素再次出现，函数则返回 ``True`` 。
 
-Using sets, we can write the same function like this:
+如果使用集合，我们可以像这样重写该函数：
 
 ::
 
     def has_duplicates(t):
         return len(set(t)) < len(t)
 
-An element can only appear in a set once, so if an element in t appears
-more than once, the set will be smaller than t. If there are no
-duplicates, the set will be the same size as t.
+一个元素在集合中只能出现一次，因此如果 ``t`` 中的某个元素出现次数超过一次，那么集合的大小就会小于 ``t`` 。如果没有重复的元素，集合和 ``t`` 的大小则相同。
 
-We can also use sets to do some of the exercises in Chapter [wordplay].
-For example, here’s a version of ``uses_only`` with a loop:
+我们还可以使用集合完成\ :ref:`wordplay`\ 中的部分练习题。例如，下面是使用循环实现的 ``uses_only`` 函数：
 
 ::
 
     def uses_only(word, available):
-        for letter in word: 
+        for letter in word:
             if letter not in available:
                 return False
         return True
 
-``uses_only`` checks whether all letters in word are in available. We
-can rewrite it like this:
+``uses_only`` 检查 ``word`` 中的所有字符也在 ``available`` 中。我们可以像这样重写该函数：
 
 ::
 
     def uses_only(word, available):
         return set(word) <= set(available)
 
-The ``<=`` operator checks whether one set is a subset or another,
-including the possibility that they are equal, which is true if all the
-letters in word appear in available.
+操作符  ``<=``  检查某个集合是否是另一个集合的子集或本身，包括了二者相等的可能性。如果 ``word`` 中所有的字符都出现在 ``available`` 中，则返回 ``True`` 。
 
-As an exercise, rewrite ``avoids`` using sets.
+接下来做个练习，使用集合重写 ``avoids`` 函数。
 
-Counters
---------
 
-A Counter is like a set, except that if an element appears more than
-once, the Counter keeps track of how many times it appears. If you are
-familiar with the mathematical idea of a **multiset**, a Counter is a
-natural way to represent a multiset.
+计数器
+-----------
 
-Counter is defined in a standard module called collections, so you have
-to import it. You can initialize a Counter with a string, list, or
-anything else that supports iteration:
+计数器（Counter）类似集合，区别在于如果某个元素出现次数超过一次，计数器就会记录其出现次数。如果你熟悉数学中的 **多重集** 概念，计数器就是用来表示一个多重集的自然选择。
+
+计数器定义在叫做 ``collections`` 的标准模块中，因此你必须首先导入该模块。你可以通过字符串、列表或任何支持迭代的数据结构来初始化计数器：
 
 ::
 
@@ -345,32 +273,25 @@ anything else that supports iteration:
     >>> count
     Counter({'r': 2, 't': 1, 'o': 1, 'p': 1, 'a': 1})
 
-Counters behave like dictionaries in many ways; they map from each key
-to the number of times it appears. As in dictionaries, the keys have to
-be hashable.
+计数器的行为与字典有很多相似的地方：它们将每个键映射至其出现的次数。与字典一样，键必须是可哈希的。
 
-Unlike dictionaries, Counters don’t raise an exception if you access an
-element that doesn’t appear. Instead, they return 0:
+与字典不同的是，如果你访问一个没有出现过的元素，计数器不会抛出异常，而只是返回 0 ：
 
 ::
 
     >>> count['d']
     0
 
-We can use Counters to rewrite ``is_anagram`` from Exercise [anagram]:
+我们可以使用计数器重写\ :ref:`anagram` \ 中的 ``is_anagram`` 函数：
 
 ::
 
     def is_anagram(word1, word2):
         return Counter(word1) == Counter(word2)
 
-If two words are anagrams, they contain the same letters with the same
-counts, so their Counters are equivalent.
+如果两个单词是变位词，那么它们会包含相同的字符，而且字符的计数也相同，因此它们的计数器也是等价的。
 
-Counters provide methods and operators to perform set-like operations,
-including addition, subtraction, union and intersection. And they
-provide an often-useful method, ``most_common``, which returns a list of
-value-frequency pairs, sorted from most common to least:
+计数器提供了执行类似集合操作的方法和操作符，包括集合添加、差集、并集和交集。另外，还提供了一个通常非常有用的方法 ``most_common`` ，返回一个由值-频率对组成的列表，按照频率高低排序：
 
 ::
 
@@ -382,25 +303,18 @@ value-frequency pairs, sorted from most common to least:
     a 1
 
 defaultdict
------------
+--------------
 
-The collections module also provides defaultdict, which is like a
-dictionary except that if you access a key that doesn’t exist, it can
-generate a new value on the fly.
+``collections`` 模块中还提供了一个 ``defaultdict`` ，它类似字典，但是如果你访问一个不存在的键，它会临时生成一个新值。
 
-When you create a defaultdict, you provide a function that’s used to
-create new values. A function used to create objects is sometimes called
-a **factory**. The built-in functions that create lists, sets, and other
-types can be used as factories:
+在创建 ``defaultdict`` 时，你提供一个用于创建新值的函数。这个用于创建对象的函数有时也被称为 **工厂** 。用于创建列表、集合和其他类型的内建函数也可以用作工厂：
 
 ::
 
     >>> from collections import defaultdict
     >>> d = defaultdict(list)
 
-Notice that the argument is list, which is a class object, not list(),
-which is a new list. The function you provide doesn’t get called unless
-you access a key that doesn’t exist.
+请注意，这里的实参是 ``list`` ，它是一个类对象，而不是 ``list()`` ，后者是一个新列表。你提供的函数只有在访问不存在的键时，才会被调用。
 
 ::
 
@@ -408,8 +322,7 @@ you access a key that doesn’t exist.
     >>> t
     []
 
-The new list, which we’re calling t, is also added to the dictionary. So
-if we modify t, the change appears in d:
+新列表 ``t`` 也被添加至字典中。因此如果我们修改 ``t`` ，改动也会出现在 ``d`` 中。
 
 ::
 
@@ -417,14 +330,9 @@ if we modify t, the change appears in d:
     >>> d
     defaultdict(<class 'list'>, {'new key': ['new value']})
 
-If you are making a dictionary of lists, you can often write simpler
-code using defaultdict. In my solution to Exercise [anagrams], which you
-can get from http://thinkpython2.com/code/anagram_sets.py, I make a
-dictionary that maps from a sorted string of letters to the list of
-words that can be spelled with those letters. For example, ’opst’ maps
-to the list .
+如果你要创建一个列表组成的字典，通常你可以使用 ``defaultdict`` 来简化代码。在\ :ref:`anagrams`\ 的答案（可从 http://thinkpython2.com/code/anagram_sets.py 处获取）中，我创建的字典将排好序的字符串映射至一个可以由这些字符串构成的单词列表。例如，``'opst'`` 映射至列表 ``['opts', 'post', 'pots', 'spot', 'stop', 'tops']`` 。
 
-Here’s the original code:
+下面是代码：
 
 ::
 
@@ -439,8 +347,7 @@ Here’s the original code:
                 d[t].append(word)
         return d
 
-This can be simplified using setdefault, which you might have used in
-Exercise [setdefault]:
+这个函数可以使用 ``setdefault`` 进行简化，你可能在\ :ref:`setdefault`\ 中也用到了：
 
 ::
 
@@ -452,11 +359,9 @@ Exercise [setdefault]:
             d.setdefault(t, []).append(word)
         return d
 
-This solution has the drawback that it makes a new list every time,
-regardless of whether it is needed. For lists, that’s no big deal, but
-if the factory function is complicated, it might be.
+这种方案有一个缺点，即不管是否需要，每次都会创建一个新列表。如果只是创建列表，这问题你不大，但是如果工厂函数非常复杂，就可能会成为一个大问题。
 
-We can avoid this problem and simplify the code using a defaultdict:
+我们可以使用 ``defaultdict`` 来避免这个问题，同时简化代码：
 
 ::
 
@@ -468,19 +373,12 @@ We can avoid this problem and simplify the code using a defaultdict:
             d[t].append(word)
         return d
 
-My solution to Exercise [poker], which you can download from
-http://thinkpython2.com/code/PokerHandSoln.py, uses setdefault in the
-function ``has_straightflush``. This solution has the drawback of
-creating a Hand object every time through the loop, whether it is needed
-or not. As an exercise, rewrite it using a defaultdict.
+\ :ref:`poker`\ 的答案（可从 http://thinkpython2.com/code/PokerHandSoln.py 下载）中，``has_straightflush`` 函数使用了 ``setdefault`` 。这个答案的缺点就是每次循环时都会创建一个 ``Hand`` 对象，不管是否需要。我们做个练习，使用 ``defaultdict`` 改写这个函数。
 
-Named tuples
+命名元组
 ------------
 
-Many simple objects are basically collections of related values. For
-example, the Point object defined in Chapter [clobjects] contains two
-numbers, x and y. When you define a class like this, you usually start
-with an init method and a str method:
+许多简单对象基本上就是相关值的集合。例如，\ :ref:`clobjects`\ 中定义的 ``Point`` 对象包含两个数字 ``x`` 和 ``y`` 。当你像下面这样定义类时，你通常先开始定义 init 和 str 方法：
 
 ::
 
@@ -493,27 +391,23 @@ with an init method and a str method:
         def __str__(self):
             return '(%g, %g)' % (self.x, self.y)
 
-This is a lot of code to convey a small amount of information. Python
-provides a more concise way to say the same thing:
+但是编写了这么多代码，却只传递了很少的信息。Python提供了一个更简洁的实现方式：
 
 ::
 
     from collections import namedtuple
     Point = namedtuple('Point', ['x', 'y'])
 
-The first argument is the name of the class you want to create. The
-second is a list of the attributes Point objects should have, as
-strings. The return value from namedtuple is a class object:
+第一个实参是你希望创建的类的名称。第二个实参是 ``Point`` 对象应该具备的属性列表，以字符串的形式指定。 ``namedtuple`` 的返回值是一个类对象：
 
 ::
 
     >>> Point
     <class '__main__.Point'>
 
-Point automatically provides methods like ``__init__`` and ``__str__``
-so you don’t have to write them.
+这里的 ``Point`` 自动提供了像 ``__init__`` 和 ``__str__`` 这样的方法，你没有必须再自己编写。
 
-To create a Point object, you use the Point class as a function:
+如果想创建一个 ``Point`` 对象，你可以将 ``Point`` 类当作函数使用：
 
 ::
 
@@ -521,18 +415,16 @@ To create a Point object, you use the Point class as a function:
     >>> p
     Point(x=1, y=2)
 
-The init method assigns the arguments to attributes using the names you
-provided. The str method prints a representation of the Point object and
-its attributes.
+init 方法将实参赋值给你提供的属性。str 方法打印 ``Point`` 对象的字符串呈现及其属性。
 
-You can access the elements of the named tuple by name:
+你可以通过名称访问命令元组的元素：
 
 ::
 
     >>> p.x, p.y
     (1, 2)
 
-But you can also treat a named tuple as a tuple:
+但是你也可以把命名元组当作元组使用：
 
 ::
 
@@ -543,62 +435,54 @@ But you can also treat a named tuple as a tuple:
     >>> x, y
     (1, 2)
 
-Named tuples provide a quick way to define simple classes. The drawback
-is that simple classes don’t always stay simple. You might decide later
-that you want to add methods to a named tuple. In that case, you could
-define a new class that inherits from the named tuple:
+命名元组是定义简单类的一种便捷方式。缺点是这些简单类不会一成不变。之后你可能会发现想要给命名元组添加更多的方法。在这种情况下，你可以定义一个继承自命名元组的新类：
 
 ::
 
     class Pointier(Point):
         # add more methods here
 
-Or you could switch to a conventional class definition.
+或者使用传统的类定义方式。
 
-Gathering keyword args
+汇集关键字实参
 ----------------------
 
-In Section [gather], we saw how to write a function that gathers its
-arguments into a tuple:
+在\ :ref:`gather`\ 一节中，我们学习了如何编写一个将实参汇集到元组的函数：
 
 ::
 
     def printall(*args):
         print(args)
 
-You can call this function with any number of positional arguments (that
-is, arguments that don’t have keywords):
+你可以使用任意数量的位置实参（即不带关键字的参数）调用该函数：
 
 ::
 
     >>> printall(1, 2.0, '3')
     (1, 2.0, '3')
 
-But the operator doesn’t gather keyword arguments:
+不过 ``*`` 星号操作符无法汇集关键字参数：
 
 ::
 
     >>> printall(1, 2.0, third='3')
     TypeError: printall() got an unexpected keyword argument 'third'
 
-To gather keyword arguments, you can use the \* operator:
+如果要汇集关键字参数，你可以使用 ``**`` 双星号操作符：
 
 ::
 
     def printall(*args, **kwargs):
         print(args, kwargs)
 
-You can call the keyword gathering parameter anything you want, but
-kwargs is a common choice. The result is a dictionary that maps keywords
-to values:
+你可以给关键字汇集形参取任意的名称，但是 ``kwargs`` 是常用名。上面函数的结果是一个将关键字映射至值的字典：
 
 ::
 
     >>> printall(1, 2.0, third='3')
     (1, 2.0) {'third': '3'}
 
-If you have a dictionary of keywords and values, you can use the scatter
-operator, \* to call a function:
+如果你有一个有关键字和值组成的字典，可以使用分散操作符（scatter operator） ``**`` 调用函数：
 
 ::
 
@@ -606,9 +490,7 @@ operator, \* to call a function:
     >>> Point(**d)
     Point(x=1, y=2)
 
-Without the scatter operator, the function would treat d as a single
-positional argument, so it would assign d to x and complain because
-there’s nothing to assign to y:
+如果没有分散操作符，函数会将 ``d`` 视为一个位置实参，因此会将 ``d`` 赋值给 ``x`` 并报错，因为没有给 ``y`` 赋值：
 
 ::
 
@@ -618,36 +500,39 @@ there’s nothing to assign to y:
       File "<stdin>", line 1, in <module>
     TypeError: __new__() missing 1 required positional argument: 'y'
 
-When you are working with functions that have a large number of
-parameters, it is often useful to create and pass around dictionaries
-that specify frequently used options.
+在处理有大量形参的函数时，通常可以创建指定了常用选项的字典，并将其传入函数。
 
-Glossary
+术语表
 --------
 
-conditional expression:
-    An expression that has one of two values, depending on a condition.
+条件表达式（conditional expression）：
 
-list comprehension:
-    An expression with a for loop in square brackets that yields a new
-    list.
+    根据条件在两个值中二选一的表达式。
 
-generator expression:
-    An expression with a for loop in parentheses that yields a generator
-    object.
+列表推导式（list comprehension）：
 
-multiset:
-    A mathematical entity that represents a mapping between the elements
-    of a set and the number of times they appear.
+    位于方括号中带 for 循环的表达式，最终生成一个新列表。
 
-factory:
-    A function, usually passed as a parameter, used to create objects.
+生成器表达式（generator expression）：
 
-Exercises
+    位于圆括号中带 for 循环的表达式，最终生成一个生成器对象。
+
+多重集（multiset）：
+
+    一个数学概念，表示一个集合的元素与各元素出现次数之间的映射。
+
+工厂（factory）：
+
+    用于创建对象的函数，通常作为形参传入。
+
+
+练习题
 ---------
 
-The following is a function computes the binomial coefficient
-recursively.
+习题19-1
+^^^^^^^^^^^
+
+下面是一个递归计算二项式系数（binomial coefficient）的函数。
 
 ::
 
@@ -667,9 +552,17 @@ recursively.
         res = binomial_coeff(n-1, k) + binomial_coeff(n-1, k-1)
         return res
 
-Rewrite the body of the function using nested conditional expressions.
+使用嵌套条件表达式重写函数体。
 
-One note: this function is not very efficient because it ends up
-computing the same values over and over. You could make it more
-efficient by memoizing (see Section [memoize]). But you will find that
-it’s harder to memoize if you write it using conditional expressions.
+注意：这个函数不是特别高效，因为它最后在不断地重复计算相同的值。你可以通过备忘录模式（memoizing，也可理解为缓存）来提高效率（参见\ :ref:`memoize`\ 一节）。不过你会发现，如果使用条件表达式，进行缓存的难度会更大。
+
+**贡献者**
+^^^^^^^^^^^
+
+#. 翻译：`@bingjin`_
+#. 校对：`@bingjin`_
+#. 参考：`@carfly`_
+
+.. _@bingjin: https://github.com/bingjin
+.. _@bingjin: https://github.com/bingjin
+.. _@carfly: https://github.com/carfly

@@ -1,74 +1,46 @@
-Classes and methods
+第十七章：类和方法
 ===================
 
-Although we are using some of Python’s object-oriented features, the
-programs from the last two chapters are not really object-oriented
-because they don’t represent the relationships between
-programmer-defined types and the functions that operate on them. The
-next step is to transform those functions into methods that make the
-relationships explicit.
+虽然我们已经在使用部分 Python 面向对象的特性，前两个章节中的程序并不是真正面向对象的，
+因为它们没有呈现出程序员自定义类型与对其进行操作的函数（functions）之间的关系。
+下一步，我们将会把这些函数转换成明显突出这一关系的方法（methods）。
 
-Code examples from this chapter are available from
-http://thinkpython2.com/code/Time2.py, and solutions to the exercises
-are in http://thinkpython2.com/code/Point2_soln.py.
+本章代码可以从\ http://thinkpython2.com/code/Time2.py \ 获取，
+练习题的答案位于\ http://thinkpython2.com/code/Point2_soln.py \ 。
 
-Object-oriented features
+面向对象的特性
 ------------------------
 
-Python is an **object-oriented programming language**, which means that
-it provides features that support object-oriented programming, which has
-these defining characteristics:
+Python 是一门**面向对象的编程语言**，这意味它提供了能够支持面向对象编程的特性。
+面向对象编程具有以下特征：
 
--  Programs include class and method definitions.
+- 程序包含类和方法定义。
 
--  Most of the computation is expressed in terms of operations on
-   objects.
+- 大部分计算以对象上的操作表示。
 
--  Objects often represent things in the real world, and methods often
-   correspond to the ways things in the real world interact.
+- 对象通常代表现实世界的物体，方法对应现实世界中物体交互的方式。
 
-For example, the Time class defined in Chapter [time] corresponds to the
-way people record the time of day, and the functions we defined
-correspond to the kinds of things people do with times. Similarly, the
-Point and Rectangle classes in Chapter [clobjects] correspond to the
-mathematical concepts of a point and a rectangle.
+例如，第16章中定义的 ``Time`` 类对应人们用来记录一天中的时间，其中定义的各种函数对应人们使用时间的方式。类似的，第15章中的 ``Point`` 类和 ``Rectangle`` 类对应数学中点和矩形的概念。
 
-So far, we have not taken advantage of the features Python provides to
-support object-oriented programming. These features are not strictly
-necessary; most of them provide alternative syntax for things we have
-already done. But in many cases, the alternative is more concise and
-more accurately conveys the structure of the program.
+到目前为止，我们还没有利用Python提供的支持面向对象编程的特性。这些特性严格来说并不是必须的；大部分提供的是我们已经实现的功能的替代语法。但在很多情况下，这些替代语法更加简洁，更准确地表达了程序的结构。
 
-For example, in Time1.py there is no obvious connection between the
-class definition and the function definitions that follow. With some
-examination, it is apparent that every function takes at least one Time
-object as an argument.
+例如，在 ``Time1.py`` 中，类定义与之后的函数定义之间没有明显的联系。仔细检查之后，才会发现每个函数都至少接受一个 ``Time`` 对象作为参数。
 
-This observation is the motivation for **methods**; a method is a
-function that is associated with a particular class. We have seen
-methods for strings, lists, dictionaries and tuples. In this chapter, we
-will define methods for programmer-defined types.
+从这个观察中我们发现了\ **方法**\ ；方法是一个与特定的类相关联的函数。我们已经接触了字符串、列表、字典和元组的方法。在这章中，我们将会定义程序员自定义类型的方法。
 
-Methods are semantically the same as functions, but there are two
-syntactic differences:
+方法和函数的语义相同，但是有两处句法的不同：
 
--  Methods are defined inside a class definition in order to make the
-   relationship between the class and the method explicit.
+-  方法在一个类定义内部声明，为的是显示地与类进行关联。
 
--  The syntax for invoking a method is different from the syntax for
-   calling a function.
+-  调用方法的语法和调用函数的语法不同。
 
-In the next few sections, we will take the functions from the previous
-two chapters and transform them into methods. This transformation is
-purely mechanical; you can do it by following a sequence of steps. If
-you are comfortable converting from one form to another, you will be
-able to choose the best form for whatever you are doing.
+在接下来的几节中，我们会把前面两章中的函数转化为方法。这个转化是纯机械式的；你可以通
+过一系列步骤完成。如果你能够轻松地将一种形式转换成另一种形式，就可以选择最适合目前需求的形式。
 
-Printing objects
+打印对象
 ----------------
 
-In Chapter [time], we defined a class named Time and in
-Section [isafter], you wrote a function named ``print_time``:
+在第16章中，我们定义了一个名叫 ``Time`` 的类，在\ :ref:`isafter`\ 一节中，你编写了一个叫做 ``print_time`` 的函数：
 
 ::
 
@@ -78,7 +50,7 @@ Section [isafter], you wrote a function named ``print_time``:
     def print_time(time):
         print('%.2d:%.2d:%.2d' % (time.hour, time.minute, time.second))
 
-To call this function, you have to pass a Time object as an argument:
+想要调用这个函数，你必须把一个 ``Time`` 对象作为一个参数传递给函数。
 
 ::
 
@@ -89,9 +61,8 @@ To call this function, you have to pass a Time object as an argument:
     >>> print_time(start)
     09:45:00
 
-To make ``print_time`` a method, all we have to do is move the function
-definition inside the class definition. Notice the change in
-indentation.
+将 ``print_time`` 变成一个方法，我们只需要将函数定义移到类定义里面即可。注意缩进
+的变化。
 
 ::
 
@@ -99,36 +70,29 @@ indentation.
         def print_time(time):
             print('%.2d:%.2d:%.2d' % (time.hour, time.minute, time.second))
 
-Now there are two ways to call ``print_time``. The first (and less
-common) way is to use function syntax:
+现在有两种方法可以调用\ ``print_time``\ 。第一种（也是不常用的）是使用函数的语法：
 
 ::
 
     >>> Time.print_time(start)
     09:45:00
 
-In this use of dot notation, Time is the name of the class, and
-``print_time`` is the name of the method. start is passed as a
-parameter.
+在这个点标记法的用法中，``Time`` 是类的名字，\ ``print_time``\ 是方法的名字。``start`` 是传递的参数。
 
-The second (and more concise) way is to use method syntax:
+第二种语法（也更简洁）是使用方法语法：
 
 ::
 
     >>> start.print_time()
     09:45:00
 
-In this use of dot notation, ``print_time`` is the name of the method
-(again), and start is the object the method is invoked on, which is
-called the **subject**. Just as the subject of a sentence is what the
-sentence is about, the subject of a method invocation is what the method
-is about.
+在这个点标记法的用法中，\ ``print_time``\ 是方法的名称，然后 ``start`` 是调用方法的对象
+，被称为主语（\ **subject**\ ）。就像一个句子的主语是句子的核心，方法的主语也是方
+法作用的主要对象。
 
-Inside the method, the subject is assigned to the first parameter, so in
-this case start is assigned to time.
+在方法中，主语被赋值为第一个参数，所以在这里 ``start`` 被赋值给 ``time`` 上了。
 
-By convention, the first parameter of a method is called self, so it
-would be more common to write ``print_time`` like this:
+根据约定，方法的第一个参数写作 ``self`` ，所以\ ``print_time``\ 写成这样更常见：
 
 ::
 
@@ -136,32 +100,23 @@ would be more common to write ``print_time`` like this:
         def print_time(self):
             print('%.2d:%.2d:%.2d' % (self.hour, self.minute, self.second))
 
-The reason for this convention is an implicit metaphor:
+使用该约定原因在于一种暗喻：
 
--  The syntax for a function call, ``print_time(start)``, suggests that
-   the function is the active agent. It says something like, “Hey
-   ``print_time``! Here’s an object for you to print.”
+-  在函数调用的语法中，\ ``print_time(start)``\ 表示函数是一个活跃的代理。就像是在
+   说“Hi, print_time! 这有一个对象需要你打印”。
 
--  In object-oriented programming, the objects are the active agents. A
-   method invocation like ``start.print_time()`` says “Hey start! Please
-   print yourself.”
+-  在面向对象编程中，对象是活跃的代理。一个类似\ ``start.print_time()``\ 的方法
+   调用，就像是在说“Hi start! 请打印你自己”。
 
-This change in perspective might be more polite, but it is not obvious
-that it is useful. In the examples we have seen so far, it may not be.
-But sometimes shifting responsibility from the functions onto the
-objects makes it possible to write more versatile functions (or
-methods), and makes it easier to maintain and reuse code.
+视角的转换似乎让语气变得更文雅些了，但很难看出其好处。在前面的例子中，的确如此。
+但是将职责从函数上面转移到对象上，可以更加容易地写出多样化的函数（或方法），并且代码将更加容易维护和复用。
 
-As an exercise, rewrite ``time_to_int`` (from Section [prototype]) as a
-method. You might be tempted to rewrite ``int_to_time`` as a method,
-too, but that doesn’t really make sense because there would be no object
-to invoke it on.
+我们做个练习，将 ``time_to_int`` （见 \ :ref:`prototype`\ ）重写为方法。你或许也想将 ``int_to_time`` 改写为方法，但是那样做并没有什么意义，因为没有调用它的对象。
 
-Another example
+再举一例
 ---------------
 
-Here’s a version of increment (from Section [increment]) rewritten as a
-method:
+下面是 ``increment`` （见 \ :ref:`increment`\ ）改写为方法后的代码版本：
 
 ::
 
@@ -171,10 +126,9 @@ method:
             seconds += self.time_to_int()
             return int_to_time(seconds)
 
-This version assumes that ``time_to_int`` is written as a method. Also,
-note that it is a pure function, not a modifier.
+这个版本假设\ ``time_to_int``\ 已经改成了方法。另外，注意这是一个纯函数，不是修改器。
 
-Here’s how you would invoke increment:
+下面是调用 ``increment`` 的方法：
 
 ::
 
@@ -184,38 +138,29 @@ Here’s how you would invoke increment:
     >>> end.print_time()
     10:07:17
 
-The subject, start, gets assigned to the first parameter, self. The
-argument, 1337, gets assigned to the second parameter, seconds.
+主语 ``start`` 被赋值给第一个形参 ``self`` 。实参 1337 被赋值给第二个形参 ``seconds`` 。
 
-This mechanism can be confusing, especially if you make an error. For
-example, if you invoke increment with two arguments, you get:
+这个机制有时会把人弄晕，尤其是你犯错的时候。例如，如果你使用两个实参调用 ``increment`` ， 你会得到：
 
 ::
 
     >>> end = start.increment(1337, 460)
     TypeError: increment() takes 2 positional arguments but 3 were given
 
-The error message is initially confusing, because there are only two
-arguments in parentheses. But the subject is also considered an
-argument, so all together that’s three.
+错误信息一开始让人很难理解，因为在括号内只有两个实参。但是主语也被认为是一个实参，所以加在一起共有三个实参。
 
-By the way, a **positional argument** is an argument that doesn’t have a
-parameter name; that is, it is not a keyword argument. In this function
-call:
+另外，**位置参数** 是没有形参名的参数；也就是说，它不是一个关键字参数。在下面这个函数调用中：
 
 ::
 
     sketch(parrot, cage, dead=True)
 
-parrot and cage are positional, and dead is a keyword argument.
+\ ``parrot``\ 和 \ ``cage``\ 是位置参数，而 ``dead`` 是一个关键字参数。
 
-A more complicated example
+一个更复杂的例子
 --------------------------
 
-Rewriting ``is_after`` (from Section [isafter]) is slightly more
-complicated because it takes two Time objects as parameters. In this
-case it is conventional to name the first parameter self and the second
-parameter other:
+重写 ``is_after`` （见 \ :ref:`isafter`\ 一节）要更加复杂一些，因为它接受两个 ``Time`` 对象作为参数。在这个例子中，惯用的做法是将第一个形参命名为 ``self`` ，第二个形参命名为 ``other`` ：
 
 ::
 
@@ -224,25 +169,21 @@ parameter other:
         def is_after(self, other):
             return self.time_to_int() > other.time_to_int()
 
-To use this method, you have to invoke it on one object and pass the
-other as an argument:
+要使用该方法的话，你必须在某个对象上调用它，并传入 ``other`` 的实参：
 
 ::
 
     >>> end.is_after(start)
     True
 
-One nice thing about this syntax is that it almost reads like English:
-“end is after start?”
+这个语法有一个好处，就是它读起来很像英语：“end是出现在start之后吗？”
 
-The init method
+init 方法
 ---------------
 
-The init method (short for “initialization”) is a special method that
-gets invoked when an object is instantiated. Its full name is
-``__init__`` (two underscore characters, followed by init, and then two
-more underscores). An init method for the Time class might look like
-this:
+init 方法（“initialization”的简称）是一个特殊的方法，当一个对象初始化的时候调
+用。它的全名是\ ``__init__``\ （两个下划线后加init再加两个下划线）。
+一个 ``Time`` 类的 init 方法看起来像是这样的：
 
 ::
 
@@ -253,17 +194,15 @@ this:
             self.minute = minute
             self.second = second
 
-It is common for the parameters of ``__init__`` to have the same names
-as the attributes. The statement
+通常\ ``__init__``\ 方法的参数和属性的名称一样。
 
 ::
 
             self.hour = hour
 
-stores the value of the parameter hour as an attribute of self.
+上面的语句把 ``hour`` 参数的值储存为 ``self`` 的一个属性。
 
-The parameters are optional, so if you call Time with no arguments, you
-get the default values.
+参数是可选的，所以如果你不带参数的调用 ``Time`` ，你会得到默认值。
 
 ::
 
@@ -271,7 +210,7 @@ get the default values.
     >>> time.print_time()
     00:00:00
 
-If you provide one argument, it overrides hour:
+如果你提供一个参数，它会覆盖 ``hour`` ：
 
 ::
 
@@ -279,28 +218,23 @@ If you provide one argument, it overrides hour:
     >>> time.print_time()
     09:00:00
 
-If you provide two arguments, they override hour and minute.
-
+如果你提供两个参数，他们会覆盖 ``hour`` 和 ``minute`` 。
 ::
 
     >>> time = Time(9, 45)
     >>> time.print_time()
     09:45:00
 
-And if you provide three arguments, they override all three default
-values.
+如果你提供三个参数，它们会覆盖三个默认值。
 
-As an exercise, write an init method for the Point class that takes x
-and y as optional parameters and assigns them to the corresponding
-attributes.
+我们做个练习，为 ``Point`` 类写一个 init 方法，使用 ``x`` 和 ``y`` 作为可选参数，然后赋值给对应的属性。
 
-The \_\_str\_\_ method
+\_\_str\_\_ 方法
 ----------------------
 
-``__str__`` is a special method, like ``__init__``, that is supposed to
-return a string representation of an object.
+``__str__``\ 是一个和\ ``__init__``\ 方法类似的特殊方法，返回一个对象的字符串表现形式。
 
-For example, here is a str method for Time objects:
+例如，下面是一个 ``Time`` 对象的 ``str`` 方法：
 
 ::
 
@@ -309,7 +243,7 @@ For example, here is a str method for Time objects:
         def __str__(self):
             return '%.2d:%.2d:%.2d' % (self.hour, self.minute, self.second)
 
-When you print an object, Python invokes the str method:
+当你打印一个对象，Python 调用 str 方法：
 
 ::
 
@@ -317,22 +251,17 @@ When you print an object, Python invokes the str method:
     >>> print(time)
     09:45:00
 
-When I write a new class, I almost always start by writing ``__init__``,
-which makes it easier to instantiate objects, and ``__str__``, which is
-useful for debugging.
+写一个新类时，我总是从\ ``__init__``\ 开始，使得更容易实例化对象，接着就是写\ ``__str__``\ 方法，方便调试。
 
-As an exercise, write a str method for the Point class. Create a Point
-object and print it.
+我们做个练习，为 ``Point`` 类写一个 str 方法。然后创建一个 ``Point`` 对象并打印。
 
-Operator overloading
+运算符重载
 --------------------
 
-By defining other special methods, you can specify the behavior of
-operators on programmer-defined types. For example, if you define a
-method named ``__add__`` for the Time class, you can use the + operator
-on Time objects.
+通过定义其它的一些特殊方法，你可以在程序员自定义类型上指定运算符的行为。
+例如，如果你为 ``Time`` 类定义了一个叫\ ``__add__``\ 的方法，你就可以在 ``Time`` 对象上使用 + 运算符。
 
-Here is what the definition might look like:
+可以大致像这样定义：
 
 ::
 
@@ -342,7 +271,7 @@ Here is what the definition might look like:
             seconds = self.time_to_int() + other.time_to_int()
             return int_to_time(seconds)
 
-And here is how you could use it:
+下面是使用方式：
 
 ::
 
@@ -351,25 +280,20 @@ And here is how you could use it:
     >>> print(start + duration)
     11:20:00
 
-When you apply the + operator to Time objects, Python invokes
-``__add__``. When you print the result, Python invokes ``__str__``. So
-there is a lot happening behind the scenes!
+当你在 ``Time`` 对象上应用 + 运算符，Python 会调用\ ``__add__``\ 。
+当你打印结果时，Python 会调用\ ``__str__``\ 。
+所以实际上后台发生了很多有趣的事情！
 
-Changing the behavior of an operator so that it works with
-programmer-defined types is called **operator overloading**. For every
-operator in Python there is a corresponding special method, like
-``__add__``. For more details, see
-http://docs.python.org/3/reference/datamodel.html#specialnames.
+改变一个运算符的行为，使其兼容程序员自定义类型，这被称为\ **运算符重载（operator overloading）**\ 。
+对于每一个运算符，Python 有一个类似\ ``__add__``\ 的对应的特殊方法。
+更多的详情，请参考 http://docs.python.org/3/reference/datamodel.html#specialnames 。
 
-As an exercise, write an add method for the Point class.
+我们做个练习，为 ``Point`` 类编写一个 add 方法。
 
-Type-based dispatch
--------------------
+类型分发（type-based dispatch）
+----------------------------------
 
-In the previous section we added two Time objects, but you also might
-want to add an integer to a Time object. The following is a version of
-``__add__`` that checks the type of other and invokes either
-``add_time`` or increment:
+在上一节中，我们将两个 ``Time`` 对象相加，但是你还会想要将一个整数与 ``Time`` 对象相加。下面这个版本的 ``__add__`` 会检查 ``other`` 的类型，并相应地调用 ``add_time`` 或者 ``increment`` ：
 
 ::
 
@@ -389,15 +313,14 @@ want to add an integer to a Time object. The following is a version of
             seconds += self.time_to_int()
             return int_to_time(seconds)
 
-The built-in function isinstance takes a value and a class object, and
-returns True if the value is an instance of the class.
+内建函数 ``isinstance`` 接受一个值和一个类对象，如果值是这个类的实例则返回 ``True`` 。
 
-If other is a Time object, ``__add__`` invokes ``add_time``. Otherwise
-it assumes that the parameter is a number and invokes increment. This
-operation is called a **type-based dispatch** because it dispatches the
-computation to different methods based on the type of the arguments.
+如果 ``other`` 是一个 ``Time`` 对象，\ ``__add__``\ 调用\ ``add_time``\ 。
+否则它假设参数是一个数字然后调用 ``increment`` 。
+这个操作被称为\ **类型分发（type-based dispatch）**\ ，因为它根据参数的
+类型将计算任务分发给不同的方法。
 
-Here are examples that use the + operator with different types:
+下面是一些在不同类型上使用 + 运算符的例子：
 
 ::
 
@@ -408,20 +331,15 @@ Here are examples that use the + operator with different types:
     >>> print(start + 1337)
     10:07:17
 
-Unfortunately, this implementation of addition is not commutative. If
-the integer is the first operand, you get
+不幸的是，这个加法的实现没有交换性（commutative）。如果第一个运算数是一个整数，你会得到：
 
 ::
 
     >>> print(1337 + start)
     TypeError: unsupported operand type(s) for +: 'int' and 'instance'
 
-The problem is, instead of asking the Time object to add an integer,
-Python is asking an integer to add a Time object, and it doesn’t know
-how. But there is a clever solution for this problem: the special method
-``__radd__``, which stands for “right-side add”. This method is invoked
-when a Time object appears on the right side of the + operator. Here’s
-the definition:
+问题在于，我们不是让一个 ``Time`` 对象去加一个整数，而是让一个整数去加一个 ``Time`` 对
+象，但是Python不知道怎样去做。不过这个问题有一个优雅的解决方案：特殊方法 ``__radd__`` ，表示“右手加法”。当一个 ``Time`` 对象在 + 运算符的右手边出现时，调用这个方法。下面是定义：
 
 ::
 
@@ -430,36 +348,29 @@ the definition:
         def __radd__(self, other):
             return self.__add__(other)
 
-And here’s how it’s used:
+接着是使用方法：
 
 ::
 
     >>> print(1337 + start)
     10:07:17
 
-As an exercise, write an add method for Points that works with either a
-Point object or a tuple:
+我们做个练习，为 ``Points`` 编写一个 add 方法，使其既适用 ``Point`` 对象，也适用元组：
 
--  If the second operand is a Point, the method should return a new
-   Point whose :math:`x` coordinate is the sum of the :math:`x`
-   coordinates of the operands, and likewise for the :math:`y`
-   coordinates.
+-  如果第二个运算数是一个 ``Point`` ，该方法将返回一个新的 ``Point`` ，
+   其\ :math:`x`\ 坐标是两个运算数的\ :math:`x`\ 的和，\ :math:`y` 以此类推。
 
--  If the second operand is a tuple, the method should add the first
-   element of the tuple to the :math:`x` coordinate and the second
-   element to the :math:`y` coordinate, and return a new Point with the
-   result.
+-  如果第二个运算数是一个元组，该方法将把元组的第一个元素与\ :math:`x`\ 相加，
+   第二个元素与\ :math:`y`\ 相加，然后返回以相关结果为参数的新的 ``Point`` 。
 
-Polymorphism
+多态性
 ------------
 
-Type-based dispatch is useful when it is necessary, but (fortunately) it
-is not always necessary. Often you can avoid it by writing functions
-that work correctly for arguments with different types.
+类型分发在必要的时候非常有用，但是（幸运的是）它不是绝对必须的。
+通常，你可以通过编写对不同参数类型都适用的函数，来避免这种情况。
 
-Many of the functions we wrote for strings also work for other sequence
-types. For example, in Section [histogram] we used histogram to count
-the number of times each letter appears in a word.
+许多我们为字符串写的函数，实际上也适用于其他序列类型。
+例如，在\ :ref:`histogram`\ 一节中，我们使用 ``histogram`` 计算了单词中每个字母出现的次数。
 
 ::
 
@@ -472,9 +383,8 @@ the number of times each letter appears in a word.
                 d[c] = d[c]+1
         return d
 
-This function also works for lists, tuples, and even dictionaries, as
-long as the elements of s are hashable, so they can be used as keys in
-d.
+这个函数也适用于列表、元组甚至是字典，只要 ``s`` 的元素是可哈希的，你就可以把
+它用作 ``d`` 的键。
 
 ::
 
@@ -482,12 +392,10 @@ d.
     >>> histogram(t)
     {'bacon': 1, 'egg': 1, 'spam': 4}
 
-Functions that work with several types are called **polymorphic**.
-Polymorphism can facilitate code reuse. For example, the built-in
-function sum, which adds the elements of a sequence, works as long as
-the elements of the sequence support addition.
+适用于多种类型的函数，被称为\ **多态**\ 函数。
+多态性有助于代码复用。例如，内建函数 ``sum`` 对一个序列的元素求和，只要序列中的元素支持加法即可。
 
-Since Time objects provide an add method, they work with sum:
+因为 ``Time`` 对象提供了一个 add 方法，``sum`` 也可以应用于该对象：
 
 ::
 
@@ -498,28 +406,41 @@ Since Time objects provide an add method, they work with sum:
     >>> print(total)
     23:01:00
 
-In general, if all of the operations inside a function work with a given
-type, the function works with that type.
+通常，如果一个函数内所有的操作都适用于一个类型，那这个函数就能适用该类型。
 
-The best kind of polymorphism is the unintentional kind, where you
-discover that a function you already wrote can be applied to a type you
-never planned for.
+最好的多态性是无心成柳柳成荫的，就是你发现你已经写的一个函数，在你没有预计的类型上也能使用。
 
-Debugging
+接口和实现
+----------------------------
+
+面向对象设计的一个目标是使得软件更容易维护，这意味着当系统的其它部分改变时程序还能正常运行，你可以修改程序满足新的需求。
+
+有助于实现该目标的一个设计原则是，接口和实现分离。
+对于对象，就意味着一个类提供的方法不应该依赖属性的形式。
+
+例如，在本章中，我们设计了一个表示一天中时间的类。这个类提供的方法包括\ ``time_to_int``\ ，\ ``is_after``\ 和\ ``add_time``\ 。
+
+我们有多种方式可以实现这些方法。实现的细节取决于我们如何表示时间。
+在本章中，``Time`` 对象的属性是 ``hour`` ，``minute`` 和 ``second`` 。
+
+另一种方式是，我们用一个整数表示从零点开始的秒数，来替代这些属性。
+这个实现会使得一些方法（如\ ``is_after``\ ） 更容易编写，但也让编写其他方法变得更难。
+
+在你完成一个新类后，你可能会发现有一个更好的实现。如果程序其他部分使用了你的类，
+再来改变接口需要很多时间，而且容易出错。
+
+但是如果你细心设计好接口，你可以改变实现而保持接口不变，这样程序的其它部分都不用改变。
+
+调试
 ---------
 
-It is legal to add attributes to objects at any point in the execution
-of a program, but if you have objects with the same type that don’t have
-the same attributes, it is easy to make mistakes. It is considered a
-good idea to initialize all of an object’s attributes in the init
-method.
+在程序执行的任何时间，为一个对象添加属性都是合法的，
+但是如果相同类型的对象拥有不同的属性，就会很容易出现错误。
+通常一个好的做法是在 init 方法中初始化一个对象的所有属性。
 
-If you are not sure whether an object has a particular attribute, you
-can use the built-in function hasattr (see Section [hasattr]).
+如果你不确定一个对象是否应该有某个属性，你可以使用内建函数 ``hasattr`` (参见\ :ref:`hasattr`\ 一节)。
 
-Another way to access attributes is the built-in function vars, which
-takes an object and returns a dictionary that maps from attribute names
-(as strings) to their values:
+另一种访问对象属性的方法是使用内建函数 ``vars`` ，它接受一个对象，并返回一个将属性名称（字符串形式）到对应值的字典：
 
 ::
 
@@ -527,8 +448,7 @@ takes an object and returns a dictionary that maps from attribute names
     >>> vars(p)
     {'y': 4, 'x': 3}
 
-For purposes of debugging, you might find it useful to keep this
-function handy:
+定义下面这段代码，可能对调试非常有用：
 
 ::
 
@@ -536,118 +456,88 @@ function handy:
         for attr in vars(obj):
             print(attr, getattr(obj, attr))
 
-``print_attributes`` traverses the dictionary and prints each attribute
-name and its corresponding value.
+\ ``print_attributes``\ 遍历一个对象的字典，然后打印每个属性的名称和对应的值。
 
-The built-in function getattr takes an object and an attribute name (as
-a string) and returns the attribute’s value.
+内建函数 ``getattr`` 接受一个对象和一个属性名称（字符串）作为参数，然后返回该属性的值。
 
-Interface and implementation
-----------------------------
-
-One of the goals of object-oriented design is to make software more
-maintainable, which means that you can keep the program working when
-other parts of the system change, and modify the program to meet new
-requirements.
-
-A design principle that helps achieve that goal is to keep interfaces
-separate from implementations. For objects, that means that the methods
-a class provides should not depend on how the attributes are
-represented.
-
-For example, in this chapter we developed a class that represents a time
-of day. Methods provided by this class include ``time_to_int``,
-``is_after``, and ``add_time``.
-
-We could implement those methods in several ways. The details of the
-implementation depend on how we represent time. In this chapter, the
-attributes of a Time object are hour, minute, and second.
-
-As an alternative, we could replace these attributes with a single
-integer representing the number of seconds since midnight. This
-implementation would make some methods, like ``is_after``, easier to
-write, but it makes other methods harder.
-
-After you deploy a new class, you might discover a better
-implementation. If other parts of the program are using your class, it
-might be time-consuming and error-prone to change the interface.
-
-But if you designed the interface carefully, you can change the
-implementation without changing the interface, which means that other
-parts of the program don’t have to change.
-
-Glossary
+术语表
 --------
 
-object-oriented language:
-    A language that provides features, such as programmer-defined types
-    and methods, that facilitate object-oriented programming.
+面向对象的语言（object-oriented language）：
 
-object-oriented programming:
-    A style of programming in which data and the operations that
-    manipulate it are organized into classes and methods.
+    提供有助于面向对象编程特性的语言，如程序员自定义类型和方法。
 
-method:
-    A function that is defined inside a class definition and is invoked
-    on instances of that class.
+面向对象编程（object-oriented programming）：
 
-subject:
-    The object a method is invoked on.
+    一种编程风格，数据和处理数据的操作被组织成类和方法。
 
-positional argument:
-    An argument that does not include a parameter name, so it is not a
-    keyword argument.
+方法（method）：
 
-operator overloading:
-    Changing the behavior of an operator like + so it works with a
-    programmer-defined type.
+    在类定义内部定义的一个函数，必须在该类的实例上调用。
 
-type-based dispatch:
-    A programming pattern that checks the type of an operand and invokes
-    different functions for different types.
+主语（subject）：
 
-polymorphic:
-    Pertaining to a function that can work with more than one type.
+    方法在该对象上调用。
 
-information hiding:
-    The principle that the interface provided by an object should not
-    depend on its implementation, in particular the representation of
-    its attributes.
+位置参数（positional argument）：
 
-Exercises
+    不包括形参名的实参，所以不是关键字实参。
+
+运算符重载（operator overloading）：
+
+    改变类似 + 的运算符，使其可以应用于程序员自定义类型。
+
+类型分发（type-based dispatch）：
+
+    一种检查运算符的类型，并根据类型不同调用不同函数的编程模式。
+
+多态的（polymorphic）：
+
+    描述一个可应用于多种类型的函数。
+
+信息隐藏（information hiding）：
+
+    对象提供的接口不应依赖于其实现的原则，尤其是其属性的表示形式。
+
+练习题
 ---------
 
-Download the code from this chapter from
-http://thinkpython2.com/code/Time2.py. Change the attributes of Time to
-be a single integer representing seconds since midnight. Then modify the
-methods (and the function ``int_to_time``) to work with the new
-implementation. You should not have to modify the test code in main.
-When you are done, the output should be the same as before. Solution:
-http://thinkpython2.com/code/Time2_soln.py.
+习题17-1
+^^^^^^^^^^^
 
-[kangaroo]
+可以从 http://thinkpython2.com/code/Time2.py 下载本章的代码。修改 ``Time`` 类的属性，使用一个整数代表自午夜零点开始的秒数。然后修改类的方法（和 ``int_to_time`` 函数 ），使其适用于新的实现。你不用修改 ``main`` 函数中的测试代码。
 
-This exercise is a cautionary tale about one of the most common, and
-difficult to find, errors in Python. Write a definition for a class
-named Kangaroo with the following methods:
+完成之后，程序的输出应该和之前保持一致。答案： http://thinkpython2.com/code/Time2_soln.py 。
 
-#. An ``__init__`` method that initializes an attribute named
-   ``pouch_contents`` to an empty list.
+.. _kangaroo:
 
-#. A method named ``put_in_pouch`` that takes an object of any type and
-   adds it to ``pouch_contents``.
+习题17-2
+^^^^^^^^^^^^
 
-#. A ``__str__`` method that returns a string representation of the
-   Kangaroo object and the contents of the pouch.
+这道习题中包含了 Python 中最常见、最难找出来的错误。
+编写一个叫 ``Kangaroo`` 的类，包含以下方法：
 
-Test your code by creating two Kangaroo objects, assigning them to
-variables named kanga and roo, and then adding roo to the contents of
-kanga’s pouch.
+#. 一个\ ``__init__``\ 方法，初始化一个叫\ ``pounch_contents``\ 的属性为空列表。
 
-Download http://thinkpython2.com/code/BadKangaroo.py. It contains a
-solution to the previous problem with one big, nasty bug. Find and fix
-the bug.
+#. 一个叫\ ``put_in_pounch``\ 的方法，将一个任意类型的对象加入\ ``pounch_contents``
+   。
 
-If you get stuck, you can download
-http://thinkpython2.com/code/GoodKangaroo.py, which explains the problem
-and demonstrates a solution.
+#. 一个\ ``__str__``\ 方法，返回 ``Kangaroo`` 对象的字符串表示和 ``pounch`` 中的内容。
+
+
+创建两个 ``Kangaroo`` 对象，将它们命名为 ``kanga`` 和 ``roo`` ，然后将 ``roo`` 加入 ``kanga`` 的 ``pounch`` 列表，以此测试你写的代码。
+
+下载\ http://thinkpython2.com/code/BadKangaroo.py \ 。其中有一个上述习题的答案，但是有一个又大又棘手的 bug 。找出并修正这个 bug 。
+
+如果你找不到 bug ，可以下载 http://thinkpython2.com/code/GoodKangaroo.py ，里面解释了问题所在并提供了一个解决方案。
+
+**贡献者**
+^^^^^^^^^^^
+
+#. 翻译：`@bingjin`_
+#. 校对：`@bingjin`_
+#. 参考：`@carfly`_
+
+.. _@bingjin: https://github.com/bingjin
+.. _@bingjin: https://github.com/bingjin
+.. _@carfly: https://github.com/carfly

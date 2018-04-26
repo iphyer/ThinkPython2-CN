@@ -1,42 +1,29 @@
-Inheritance
-===========
+第十八章：继承
+===================
 
-The language feature most often associated with object-oriented
-programming is **inheritance**. Inheritance is the ability to define a
-new class that is a modified version of an existing class. In this
-chapter I demonstrate inheritance using classes that represent playing
-cards, decks of cards, and poker hands.
+最常与面向对象编程联系在一起的语言特性就是 **继承** 。继承指的是在现有类的基础下进行修改，从而定义新类的能力。在本章中，我会用表示卡牌（playing cards）、一副牌（deck of hands）和牌型（poker hands）的类，来展示继承这一特性。
 
-If you don’t play poker, you can read about it at
-http://en.wikipedia.org/wiki/Poker, but you don’t have to; I’ll tell you
-what you need to know for the exercises.
+如果你不玩扑克牌，你可以阅读 http://en.wikipedia.org/wiki/Poker 了解一下，但这不是必须的；我会告诉你完成练习所需要了解的知识点。
 
-Code examples from this chapter are available from
-http://thinkpython2.com/code/Card.py.
+本章的代码示例可以从 http://thinkpython2.com/code/Card.py 下载。
 
-Card objects
+卡牌对象
 ------------
 
-There are fifty-two cards in a deck, each of which belongs to one of
-four suits and one of thirteen ranks. The suits are Spades, Hearts,
-Diamonds, and Clubs (in descending order in bridge). The ranks are Ace,
-2, 3, 4, 5, 6, 7, 8, 9, 10, Jack, Queen, and King. Depending on the game
-that you are playing, an Ace may be higher than King or lower than 2.
+一副牌有52张牌，每一张属于4种花色的一个和13个等级的一个。
+4种花色是黑桃（Spades），红心（Hearts），方块（Diamonds），梅花（Clubs），
+以桥牌中的逆序排列。13个等级是A、2、3、4、5、6、7、8、9、10、J、Q、K。
+根据你玩的游戏的不同，A 可能比 K 大或者比 2 小。
 
-If we want to define a new object to represent a playing card, it is
-obvious what the attributes should be: rank and suit. It is not as
-obvious what type the attributes should be. One possibility is to use
-strings containing words like ``'Spade'`` for suits and ``'Queen'`` for
-ranks. One problem with this implementation is that it would not be easy
-to compare cards to see which had a higher rank or suit.
+如果我们定义一个新的对象来表示卡牌，明显它应该有\ ``rank``\ （等级） 和\ ``suit``\ （花色）
+两个属性。但两个属性的类型不太明显。一个可能是使用字符串类型，
+如\ ``'Spade'``\ 表示花色，\ ``'Queen'``\ 表示等级。这种实现的一个问题是，不是那么容易比较牌的大小，看哪张牌的等级或花色更高。
 
-An alternative is to use integers to **encode** the ranks and suits. In
-this context, “encode” means that we are going to define a mapping
-between numbers and suits, or between numbers and ranks. This kind of
-encoding is not meant to be a secret (that would be “encryption”).
+另外一种方法，是使用一个整型来 **编码** 等级和花色。
+在这里，“编码”表示我们要定义一个数字到花色或数字到等级的映射。
+但是这里的编码并不是为了保密（那就成了“加密”）。
 
-For example, this table shows the suits and the corresponding integer
-codes:
+例如，下面的表格列出了花色和对应的整数码：
 
 +------------+-------------------+-----+
 | Spades     | :math:`\mapsto`   | 3   |
@@ -48,11 +35,9 @@ codes:
 | Clubs      | :math:`\mapsto`   | 0   |
 +------------+-------------------+-----+
 
-This code makes it easy to compare cards; because higher suits map to
-higher numbers, we can compare suits by comparing their codes.
+整数码使得很容易比较牌的大小；因为更高的花色对应更高的数字，我们可以通过比较数字，来判断花色的的大小。
 
-The mapping for ranks is fairly obvious; each of the numerical ranks
-maps to the corresponding integer, and for face cards:
+等级的映射类型选择就显而易见；每个数字等级对应相应的整数，然后对于J，K，Q：
 
 +---------+-------------------+------+
 | Jack    | :math:`\mapsto`   | 11   |
@@ -62,42 +47,36 @@ maps to the corresponding integer, and for face cards:
 | King    | :math:`\mapsto`   | 13   |
 +---------+-------------------+------+
 
-I am using the :math:`\mapsto` symbol to make it clear that these
-mappings are not part of the Python program. They are part of the
-program design, but they don’t appear explicitly in the code.
+这里，我使用\ :math:`\mapsto`\ 符号来清楚的表示，这些不是 Python 程序的一部分。它们属于程序设计的一部分，但是不会出现在代码中。
 
-The class definition for Card looks like this:
+\ ``Card``\ 的类定义如下：
 
 ::
 
     class Card:
-        """Represents a standard playing card."""
+        """代表一张标准的卡牌"""
 
         def __init__(self, suit=0, rank=2):
             self.suit = suit
             self.rank = rank
 
-As usual, the init method takes an optional parameter for each
-attribute. The default card is the 2 of Clubs.
+通常，init 方法接受针对每个属性的可选形参。默认的卡牌是梅花 2。
 
-To create a Card, you call Card with the suit and rank of the card you
-want.
+可以使用你需要的花色和等级调用 ``Card`` ，创建一个 ``Card`` 对象。
 
 ::
 
     queen_of_diamonds = Card(1, 12)
 
-Class attributes
+类属性
 ----------------
 
-In order to print Card objects in a way that people can easily read, we
-need a mapping from the integer codes to the corresponding ranks and
-suits. A natural way to do that is with lists of strings. We assign
-these lists to **class attributes**:
+为了以大家能够轻松看懂的方式来打印卡牌对象，我们需要一个从整数码到对应的等级和花色的映射。
+一种直接的方法是使用字符串列表。我们把这些列表赋值到\ **类属性**\ ：
 
 ::
 
-    # inside class Card:
+    # 在Card类内部:
 
         suit_names = ['Clubs', 'Diamonds', 'Hearts', 'Spades']
         rank_names = [None, 'Ace', '2', '3', '4', '5', '6', '7', 
@@ -107,34 +86,27 @@ these lists to **class attributes**:
             return '%s of %s' % (Card.rank_names[self.rank],
                                  Card.suit_names[self.suit])
 
-Variables like ``suit_names`` and ``rank_names``, which are defined
-inside a class but outside of any method, are called class attributes
-because they are associated with the class object Card.
+像 ``suit_names`` 和 ``rank_names`` 这样的变量，是定义在类内部但在方法之外，
+被称为类属性。因为他们是被关联到 ``Card`` 类对象上的。
 
-This term distinguishes them from variables like suit and rank, which
-are called **instance attributes** because they are associated with a
-particular instance.
+这个术语将它们同 ``suit`` 和 ``rank`` 这样的变量区分开来，后者被称为\ **实例属性**\ ，
+因为他们被关联到了特定的实例。
 
-Both kinds of attribute are accessed using dot notation. For example, in
-``__str__``, self is a Card object, and self.rank is its rank.
-Similarly, Card is a class object, and ``Card.rank_names`` is a list of
-strings associated with the class.
+这两种属性都使用点标记法来访问。例如，在\ ``__str__``\ 中，``self`` 是一个卡牌对
+象，``self.rank`` 是它的等级。
+同样的，``Card`` 是一个类对象，``Card.rank_names``\ 是一个和类关联的字符串列表。
 
-Every card has its own suit and rank, but there is only one copy of
-``suit_names`` and ``rank_names``.
+每一张卡牌都有自己的花色和等级，
+但是这里只有一份\ ``suit_names``\ 和\ ``rank_names``\ 拷贝。
 
-Putting it all together, the expression ``Card.rank_names[self.rank]``
-means “use the attribute rank from the object self as an index into the
-list ``rank_names`` from the class Card, and select the appropriate
-string.”
+综合来说，表达式\ ``Card.rank_names[self.rank]``\ 表示“使用 ``self`` 对象
+中的 ``rank`` 属性作为 ``Card`` 类的\ ``rank_names``\ 列表的索引下标，然后获取相应的字符串。”
 
-The first element of ``rank_names`` is None because there is no card
-with rank zero. By including None as a place-keeper, we get a mapping
-with the nice property that the index 2 maps to the string ``'2'``, and
-so on. To avoid this tweak, we could have used a dictionary instead of a
-list.
+\ ``rank_names``\ 的第一个元素是 ``None`` ，因为没有卡牌的等级是 0 。
+通过使用 ``None`` 作为占位符，我们可以很好地将索引 2 映射到字符串\ ``'2'``\ ，等等。
+为了避免使用这种小技巧，我们也可以使用一个字典来代替列表。
 
-With the methods we have so far, we can create and print cards:
+利用现有的方法，我们可以创建和打印卡牌：
 
 ::
 
@@ -142,74 +114,63 @@ With the methods we have so far, we can create and print cards:
     >>> print(card1)
     Jack of Hearts
 
-.. figure:: figs/card1.pdf
-   :alt: Object diagram.
+.. _fig.card1:
 
-   Object diagram.
+.. figure:: figs/card1.png
+   :alt: 图18-1：对象图
 
-Figure [fig.card1] is a diagram of the Card class object and one Card
-instance. Card is a class object; its type is type. card1 is an instance
-of Card, so its type is Card. To save space, I didn’t draw the contents
-of ``suit_names`` and ``rank_names``.
+   图18-1：对象图
 
-Comparing cards
+\ :ref:`fig.card1`\ 是 ``Card`` 类对象和一个 ``Card`` 实例的图示。``Card`` 是一个类对象；它的类型是 ``type`` 。``card1`` 是 ``Card`` 的一个实例，因此它的类型是 ``Card`` 。为了节省空间，我没有画出\ ``suit_names`` 和 ``rank_names``\ 的内容。
+
+
+比较卡牌
 ---------------
 
-For built-in types, there are relational operators (<, >, ==, etc.) that
-compare values and determine when one is greater than, less than, or
-equal to another. For programmer-defined types, we can override the
-behavior of the built-in operators by providing a method named
-``__lt__``, which stands for “less than”.
+对于内建类型，有关系运算符(<, >, ==, 等等)可以比较值，判断哪一个是大于、小于或等于另外一个。
+对于程序员自定义的类型，我们可以通过提供一个叫 \ ``__lt__``\ （代表“小于”）的方法，来覆盖内建运算符的行为。
 
-``__lt__`` takes two parameters, self and other, and True if self is
-strictly less than other.
+\ ``__lt__``\ 接受 2 个参数, ``self`` 和 ``other``，如果 ``self`` 比 ``other`` 的值要小则返回 ``True`` 。
 
-The correct ordering for cards is not obvious. For example, which is
-better, the 3 of Clubs or the 2 of Diamonds? One has a higher rank, but
-the other has a higher suit. In order to compare cards, you have to
-decide whether rank or suit is more important.
+卡牌的正确顺序并不明显。例如，梅花 3 和方块 2 哪个更高？
+一个等级更高，另一个花色更高。为了比较卡牌，你必须决定等级还是花色更重要。
 
-The answer might depend on what game you are playing, but to keep things
-simple, we’ll make the arbitrary choice that suit is more important, so
-all of the Spades outrank all of the Diamonds, and so on.
+答案可能根据你玩的是什么游戏而不同，但是简洁起见，我们将规定花色更重要，所以所有的黑桃大于任何方块卡牌，以此类推。
 
-With that decided, we can write ``__lt__``:
+定好了这个规则后，我们可以编写\ ``__lt__``\ 了：
 
 ::
 
-    # inside class Card:
+    # 在Card类内部:
 
         def __lt__(self, other):
-            # check the suits
+            # 判断花色
             if self.suit < other.suit: return True
             if self.suit > other.suit: return False
 
-            # suits are the same... check ranks
+            # 花色相同...判断等级
             return self.rank < other.rank
 
-You can write this more concisely using tuple comparison:
+你可以使用元组比较来使得代码更加简洁：
 
 ::
 
-    # inside class Card:
+    # 在Card类内部:
 
         def __lt__(self, other):
             t1 = self.suit, self.rank
             t2 = other.suit, other.rank
             return t1 < t2
 
-As an exercise, write an ``__lt__`` method for Time objects. You can use
-tuple comparison, but you also might consider comparing integers.
+我们做个练习，编写一个 ``Time`` 对象的 ``__lt__`` 方法。你可以使用元组比较，也可以考虑比较整数。
 
-Decks
------
+一副牌
+---------
 
-Now that we have Cards, the next step is to define Decks. Since a deck
-is made up of cards, it is natural for each Deck to contain a list of
-cards as an attribute.
+现在我们有 ``Card`` 类了，下一步是定义完整的一副牌（Deck）了。因为一副牌由许多牌组成，自然地
+每一个 ``Deck`` 都有一个卡牌列表作为属性。
 
-The following is a class definition for Deck. The init method creates
-the attribute cards and generates the standard set of fifty-two cards:
+下面是一个 ``Deck`` 的类定义。初始化方法创建了 ``cards`` 属性，然后生成了由52张牌组成一副标准卡牌。
 
 ::
 
@@ -222,19 +183,17 @@ the attribute cards and generates the standard set of fifty-two cards:
                     card = Card(suit, rank)
                     self.cards.append(card)
 
-The easiest way to populate the deck is with a nested loop. The outer
-loop enumerates the suits from 0 to 3. The inner loop enumerates the
-ranks from 1 to 13. Each iteration creates a new Card with the current
-suit and rank, and appends it to self.cards.
+生成一副牌的最简单方法是使用嵌套循环。外层循环枚举 0 到 3 的花色。内层循环枚举 1 到 13 
+的等级。每一个迭代都用当前的花色和等级创建一张新的牌。然后放入 ``self.cards`` 中。
 
-Printing the deck
+打印一副牌
 -----------------
 
-Here is a ``__str__`` method for Deck:
+下面是为 ``Deck`` 定义的 ``__str__`` 方法：
 
 ::
 
-    #inside class Deck:
+    # Deck类的内部
 
         def __str__(self):
             res = []
@@ -242,13 +201,10 @@ Here is a ``__str__`` method for Deck:
                 res.append(str(card))
             return '\n'.join(res)
 
-This method demonstrates an efficient way to accumulate a large string:
-building a list of strings and then using the string method join. The
-built-in function str invokes the ``__str__`` method on each card and
-returns the string representation.
+这个方法展示了累积大字符串的高效方法：建立一个字符串列表然后使用字符串方法 ``join`` 。
+内建函数 ``str`` 会调用每个卡牌上的\ ``__str__``\ 方法，并返回它们的字符串表示。
 
-Since we invoke join on a newline character, the cards are separated by
-newlines. Here’s what the result looks like:
+由于我们是在一个换行符上调用的 ``join`` ，卡牌之间被换行符分隔。下面是结果示例：
 
 ::
 
@@ -263,19 +219,17 @@ newlines. Here’s what the result looks like:
     Queen of Spades
     King of Spades
 
-Even though the result appears on 52 lines, it is one long string that
-contains newlines.
+虽然这个结果有52行，但他实际上是包含换行符的一个长字符串。
 
-Add, remove, shuffle and sort
+添加，移除，洗牌和排序
 -----------------------------
 
-To deal cards, we would like a method that removes a card from the deck
-and returns it. The list method pop provides a convenient way to do
-that:
+为了发牌，我们需要一个可以把卡牌从一副牌中移除并返回的方法。
+列表的 ``pop`` 方法提供了一个便捷的实现：
 
 ::
 
-    #inside class Deck:
+    # Deck类的内部
 
         def pop_card(self):
             return self.cards.pop()
@@ -283,88 +237,69 @@ that:
 Since pop removes the *last* card in the list, we are dealing from the
 bottom of the deck.
 
-To add a card, we can use the list method append:
+由于 ``pop`` 移除列表的 **最后一张** 卡牌，所以我们从牌底开始发牌。
+
+我们可以使用列表的 ``append`` 方法，添加一张卡牌：
 
 ::
 
-    #inside class Deck:
+    # Deck类的内部
 
         def add_card(self, card):
             self.cards.append(card)
 
-A method like this that uses another method without doing much work is
-sometimes called a **veneer**. The metaphor comes from woodworking,
-where a veneer is a thin layer of good quality wood glued to the surface
-of a cheaper piece of wood to improve the appearance.
+像上面这样利用别的方法（method），自己却没有做太多处理的方法，有时候被称为 **伪装方法（veneer）** 。
+这个隐喻来源于木工行业，他们通常用一片高质量的木质薄层粘贴在一块便宜木材的表面，改善外观形象。
 
-In this case ``add_card`` is a “thin” method that expresses a list
-operation in terms appropriate for decks. It improves the appearance, or
-interface, of the implementation.
+在这里，``add_card`` 是一个“瘦”方法，以卡牌的术语来表述一个列表操作。它改善了实现的外观，或者说接口。
 
-As another example, we can write a Deck method named shuffle using the
-function shuffle from the random module:
+再举一个例子，我们可以用 ``random`` 模块中的 
+``shuffle`` 函数，给 ``Deck`` 写一个叫 ``shuffle`` 的方法。
 
 ::
 
-    # inside class Deck:
+    # Deck类的内部
                 
         def shuffle(self):
             random.shuffle(self.cards)
 
-Don’t forget to import random.
+不要忘记了导入 ``random`` 。
 
-As an exercise, write a Deck method named sort that uses the list method
-sort to sort the cards in a Deck. sort uses the ``__lt__`` method we
-defined to determine the order.
+我们做个练习，用列表的 ``sort`` 方法来写一个 ``Deck`` 的 ``sort`` 方法，给卡牌排序。
+\ ``sort``\ 使用我们定义的\ ``__cmp__``\ 来决定排序顺序。
 
-Inheritance
+
+继承
 -----------
 
-Inheritance is the ability to define a new class that is a modified
-version of an existing class. As an example, let’s say we want a class
-to represent a “hand”, that is, the cards held by one player. A hand is
-similar to a deck: both are made up of a collection of cards, and both
-require operations like adding and removing cards.
+继承指的是在现有类的基础下进行修改，从而定义新类的能力。例如，假设我们想定义一个类来代表手牌（hand），即玩家目前手里有的牌。手牌与一副牌（deck）类似：二者都由卡牌组成，都要求支持添加和移除卡牌的操作。
 
-A hand is also different from a deck; there are operations we want for
-hands that don’t make sense for a deck. For example, in poker we might
-compare two hands to see which one wins. In bridge, we might compute a
-score for a hand in order to make a bid.
+但二者也有区别；有些我们希望手牌具备的操作，对于 deck 来说并不合理。例如，在扑克牌中，我们可能需要比较两个手牌，比较哪方赢了。在桥牌中，我们可能需要计算手牌的得分，才好下注。
 
-This relationship between classes—similar, but different—lends itself to
-inheritance. To define a new class that inherits from an existing class,
-you put the name of the existing class in parentheses:
+类之间有相似之处，但也存在不同，这时就可以用上继承了。你只需要在定义新类时，将现有类的名称放在括号里，即可继承现有类：
 
 ::
 
     class Hand(Deck):
         """Represents a hand of playing cards."""
 
-This definition indicates that Hand inherits from Deck; that means we
-can use methods like ``pop_card`` and ``add_card`` for Hands as well as
-Decks.
+这个定义表明，``Hand`` 继承自 ``Deck`` ；这意味着我们也可以对 ``Hands`` 使用 ``Deck`` 的\ ``pop_card``\ 和\ ``add_card``\ 方法。
 
-When a new class inherits from an existing one, the existing one is
-called the **parent** and the new class is called the **child**.
+当一个新类继承自一个现有类时，现有类被称为 **父类** ，新类被称为 **子类** 。
 
-In this example, Hand inherits ``__init__`` from Deck, but it doesn’t
-really do what we want: instead of populating the hand with 52 new
-cards, the init method for Hands should initialize cards with an empty
-list.
+在此例中，``Hand`` 继承了 ``Deck`` 的\ ``__init__``\ 方法，但是它并没有满足我们的要求：init 方法应该为 ``Hand`` 初始化一个空的 ``cards`` 列表，而不是往手牌里添加 52 张新牌。
 
-If we provide an init method in the Hand class, it overrides the one in
-the Deck class:
+如果我们提供一个 ``Hand`` 的 init 方法，它会覆盖从 ``Deck`` 类继承来的同名方法。
 
 ::
 
-    # inside class Hand:
+    # Hand 类的内部
 
         def __init__(self, label=''):
             self.cards = []
             self.label = label
 
-When you create a Hand, Python invokes this init method, not the one in
-Deck.
+当你创建一个 ``Hand`` 时，Python 会调用这个 init 方法，而不是 ``Deck`` 中的同名方法。
 
 ::
 
@@ -374,8 +309,8 @@ Deck.
     >>> hand.label
     'new hand'
 
-The other methods are inherited from Deck, so we can use ``pop_card``
-and ``add_card`` to deal a card:
+其它方法是从 ``Deck`` 继承来的，所以我们可以使用\ ``pop_card`` 和
+``add_card``\ 来发牌：
 
 ::
 
@@ -385,182 +320,88 @@ and ``add_card`` to deal a card:
     >>> print(hand)
     King of Spades
 
-A natural next step is to encapsulate this code in a method called
-``move_cards``:
+很自然地，下一步就是把这些代码封装进一个叫\ ``move_cards``\ 的方法：
 
 ::
 
-    #inside class Deck:
+    # Deck类的内部
 
         def move_cards(self, hand, num):
             for i in range(num):
                 hand.add_card(self.pop_card())
 
-``move_cards`` takes two arguments, a Hand object and the number of
-cards to deal. It modifies both self and hand, and returns None.
+\ ``move_cards``\ 接受两个参数，一个是 ``Hand`` 对象，另一个是发牌的数量。
+它会同时修改 ``self`` 和 ``hand`` ，然后返回 ``None`` 。
 
-In some games, cards are moved from one hand to another, or from a hand
-back to the deck. You can use ``move_cards`` for any of these
-operations: self can be either a Deck or a Hand, and hand, despite the
-name, can also be a Deck.
+在有些游戏里面，卡牌从一个手牌移动到另外一个手牌，或者从手牌退还到牌堆里面。
+任何这些操作都可以使用 \ ``move_cards``\ ：``self`` 可以是一个 ``Deck`` 或者一个 ``Hand`` ，而且尽管名字叫 ``hand`` ，它也可以是一个 ``Deck`` 。
 
-Inheritance is a useful feature. Some programs that would be repetitive
-without inheritance can be written more elegantly with it. Inheritance
-can facilitate code reuse, since you can customize the behavior of
-parent classes without having to modify them. In some cases, the
-inheritance structure reflects the natural structure of the problem,
-which makes the design easier to understand.
+继承是一个非常有用的特性。有了继承，一些重复性的代码可以写得非常的优雅。
+继承有助于代码重用，因为你可以在不修改父类定义的前提下，就改变父类的行为。
+在有些情况下，继承的结构反映了真实问题的结构，使得程序更易于理解。
 
-On the other hand, inheritance can make programs difficult to read. When
-a method is invoked, it is sometimes not clear where to find its
-definition. The relevant code may be spread across several modules.
-Also, many of the things that can be done using inheritance can be done
-as well or better without it.
+另一方面，继承又有可能会使得程序更加难读。
+当调用一个方法时，有时候搞不清楚去哪找它的定义。
+相关的代码可能被分散在几个模块之中。
+而且，许多用继承能完成的事情，不用继承也可以完成，有可能还完成得更好。
 
-Class diagrams
+
+类图
 --------------
 
-So far we have seen stack diagrams, which show the state of a program,
-and object diagrams, which show the attributes of an object and their
-values. These diagrams represent a snapshot in the execution of a
-program, so they change as the program runs.
+到目前为止我们已经了解过栈图，它显示的是一个程序的状态；以及对象图，它显示的是一个对象的属性及其值。这些图代表了程序执行中的一个快照，所以它们随着程序的运行而变化。
 
-They are also highly detailed; for some purposes, too detailed. A class
-diagram is a more abstract representation of the structure of a program.
-Instead of showing individual objects, it shows classes and the
-relationships between them.
+它们也十分的详细；但有些时候显得过于详细了。类图是程序结构的一种更加抽象的表达。
+它显示的是类和类之间的关系，而不是每个独立的对象。
 
-There are several kinds of relationship between classes:
+类之间有如下几种关系：
 
--  Objects in one class might contain references to objects in another
-   class. For example, each Rectangle contains a reference to a Point,
-   and each Deck contains references to many Cards. This kind of
-   relationship is called **HAS-A**, as in, “a Rectangle has a Point.”
+-  一个类中的对象可以包含对另外一个类的对象的引用。例如，每一个矩形包含对点的引用，每一个 ``Deck`` 包含对许多 ``Card`` 的引用。这种关系被称为组合( **HAS-A** )，可以类似这样描述：“一个矩形有一个（has a）点”。
 
--  One class might inherit from another. This relationship is called
-   **IS-A**, as in, “a Hand is a kind of a Deck.”
+-  一个类可能继承自另外一个类。这种关系被称为继承(\ **IS-A**)，可以类似这样描述：“Hand is a kind of Deck”。
 
--  One class might depend on another in the sense that objects in one
-   class take objects in the second class as parameters, or use objects
-   in the second class as part of a computation. This kind of
-   relationship is called a **dependency**.
+-  一个类可能强赖另一个类，因为前者中的对象接受后者中的对象作为参数，或者使用后者中的对象作为计算的一部分。这种关系被称为 **依赖** 。
 
-A **class diagram** is a graphical representation of these
-relationships. For example, Figure [fig.class1] shows the relationships
-between Card, Deck and Hand.
+类图是这些关系的图形化表示。例如，\ :ref:`fig.class1`\ 标明了 ``Card`` ， ``Deck`` 和
+``Hand`` 之间的关系。
 
-.. figure:: figs/class1.pdf
-   :alt: Class diagram.
+.. _fig.class1:
 
-   Class diagram.
+.. figure:: figs/class1.png
+   :alt: 图18-2：类图
 
-The arrow with a hollow triangle head represents an IS-A relationship;
-in this case it indicates that Hand inherits from Deck.
+   图18-2：类图
 
-The standard arrow head represents a HAS-A relationship; in this case a
-Deck has references to Card objects.
+带空心三角的箭头表示 IS-A 的关系；这里它表示 ``Hand`` 继承自 ``Deck`` 。
 
-The star () near the arrow head is a **multiplicity**; it indicates how
-many Cards a Deck has. A multiplicity can be a simple number, like 52, a
-range, like 5..7 or a star, which indicates that a Deck can have any
-number of Cards.
+标准箭头表示 HAS-A 的关系；这里表示 ``Deck`` 包含对 ``Card`` 对象的引用。
 
-There are no dependencies in this diagram. They would normally be shown
-with a dashed arrow. Or if there are a lot of dependencies, they are
-sometimes omitted.
+箭头旁边的星号是一个复数（ **multiplicity** ）表达；它表示 ``Deck`` 包含多少个 ``Card`` 。一个复数表达可以是一个简单的数字(如 52 )，一个范围（如5..7）或者是\*，表示有任意数量的 ``Card`` 。
 
-A more detailed diagram might show that a Deck actually contains a
-*list* of Cards, but built-in types like list and dict are usually not
-included in class diagrams.
+上图中没有标出依赖关系。这种关系通常使用虚线箭头表示。或者，如果有很多依赖关系的话，有时候会省略。
 
-Debugging
----------
+一个更详细的类图可能会显示 ``Deck`` 实际包含了一个由 ``Cards`` 组成的列表，但是通常类图中不会包含 ``list`` 和 ``dict`` 等内建类型。
 
-Inheritance can make debugging difficult because when you invoke a
-method on an object, it might be hard to figure out which method will be
-invoked.
-
-Suppose you are writing a function that works with Hand objects. You
-would like it to work with all kinds of Hands, like PokerHands,
-BridgeHands, etc. If you invoke a method like shuffle, you might get the
-one defined in Deck, but if any of the subclasses override this method,
-you’ll get that version instead. This behavior is usually a good thing,
-but it can be confusing.
-
-Any time you are unsure about the flow of execution through your
-program, the simplest solution is to add print statements at the
-beginning of the relevant methods. If Deck.shuffle prints a message that
-says something like Running Deck.shuffle, then as the program runs it
-traces the flow of execution.
-
-As an alternative, you could use this function, which takes an object
-and a method name (as a string) and returns the class that provides the
-definition of the method:
-
-::
-
-    def find_defining_class(obj, meth_name):
-        for ty in type(obj).mro():
-            if meth_name in ty.__dict__:
-                return ty
-
-Here’s an example:
-
-::
-
-    >>> hand = Hand()
-    >>> find_defining_class(hand, 'shuffle')
-    <class 'Card.Deck'>
-
-So the shuffle method for this Hand is the one in Deck.
-
-``find_defining_class`` uses the mro method to get the list of class
-objects (types) that will be searched for methods. “MRO” stands for
-“method resolution order”, which is the sequence of classes Python
-searches to “resolve” a method name.
-
-Here’s a design suggestion: when you override a method, the interface of
-the new method should be the same as the old. It should take the same
-parameters, return the same type, and obey the same preconditions and
-postconditions. If you follow this rule, you will find that any function
-designed to work with an instance of a parent class, like a Deck, will
-also work with instances of child classes like a Hand and PokerHand.
-
-If you violate this rule, which is called the “Liskov substitution
-principle”, your code will collapse like (sorry) a house of cards.
-
-Data encapsulation
+数据封装
 ------------------
 
-The previous chapters demonstrate a development plan we might call
-“object-oriented design”. We identified objects we needed—like Point,
-Rectangle and Time—and defined classes to represent them. In each case
-there is an obvious correspondence between the object and some entity in
-the real world (or at least a mathematical world).
+前面几章中描述了一种可以称为”面向对象设计“的开发计划。我们确定所需要的对象 —— 如``Point`` 、 ``Rectangle`` 和  ``Time`` —— 然后定义代表它们的类。
+对于每个类来说，这个类对象和真实世界（或至少是数学世界）中的某种实体具有明显的对应关系。
 
-But sometimes it is less obvious what objects you need and how they
-should interact. In that case you need a different development plan. In
-the same way that we discovered function interfaces by encapsulation and
-generalization, we can discover class interfaces by **data
-encapsulation**.
+但是有时有很难界定你需要的对象以及它们如何交互。在这个时候，你需要一个不同的开发计划。之前我们通过封装和泛化来编写函数接口，我们同样可以通过 **数据封装** 来编写类接口。
 
-Markov analysis, from Section [markov], provides a good example. If you
-download my code from http://thinkpython2.com/code/markov.py, you’ll see
-that it uses two global variables—\ ``suffix_map`` and ``prefix``—that
-are read and written from several functions.
+\ :ref:`markov`\ 一节中介绍的马尔科夫分析就是一个很好的例子。如果你从\ http://thinkpython2.com/code/markov.py \ 下载我的代码，你会发现它使用了两个全局变量 —— \ ``suffix_map``\ 和\ ``prefix``\ ，它们被多个函数进行读写。
 
 ::
 
     suffix_map = {}        
     prefix = ()            
 
-Because these variables are global, we can only run one analysis at a
-time. If we read two texts, their prefixes and suffixes would be added
-to the same data structures (which makes for some interesting generated
-text).
+因为这些变量是全局的，我们一次只能运行一个分析。如果我们读取了两个文本，
+它们的前缀和后缀会被加入相同的数据结构（会使得输出文本混乱）。
 
-To run multiple analyses, and keep them separate, we can encapsulate the
-state of each analysis in an object. Here’s what that looks like:
+如果想同时运行多个分析，并且保持它们的相互独立，我们可以把每个分析的状态封装到一个对象中。
+下面是一个示例：
 
 ::
 
@@ -570,8 +411,7 @@ state of each analysis in an object. Here’s what that looks like:
             self.suffix_map = {}
             self.prefix = ()    
 
-Next, we transform the functions into methods. For example, here’s
-``process_word``:
+下一步，我们把这些函数转换为方法。例如：下面是\ ``process_word``\ ：
 
 ::
 
@@ -588,87 +428,127 @@ Next, we transform the functions into methods. For example, here’s
 
             self.prefix = shift(self.prefix, word)        
 
-Transforming a program like this—changing the design without changing
-the behavior—is another example of refactoring (see
-Section [refactoring]).
+像这样改变一个程序 —— 改变设计而保持功能不变 —— 是代码重构的另一个例子（参见\ :ref:`refactoring`\ 一节）。
 
-This example suggests a development plan for designing objects and
-methods:
+下面的例子给出了一种设计对象和方法的开发计划：
 
-#. Start by writing functions that read and write global variables (when
-   necessary).
 
-#. Once you get the program working, look for associations between
-   global variables and the functions that use them.
+#. 首先编写读取全局变量的函数（如有必要）。
 
-#. Encapsulate related variables as attributes of an object.
+#. 一旦你让程序跑起来了，开始查找全局变量和使用它们的函数的联系。
 
-#. Transform the associated functions into methods of the new class.
+#. 封装相关的变量作为一个对象的属性。
 
-As an exercise, download my Markov code from
-http://thinkpython2.com/code/markov.py, and follow the steps described
-above to encapsulate the global variables as attributes of a new class
-called Markov. Solution: http://thinkpython2.com/code/Markov.py (note
-the capital M).
+#. 转换相关函数为新类的方法。
 
-Glossary
---------
+我们做个练习，从 http://thinkpython2.com/code/markov.py 下载我的马尔科夫分析代码，然后按照上面所述的步骤，将全局变量封装为新类 ``Markov`` （注意M为大写）的属性。
 
-encode:
-    To represent one set of values using another set of values by
-    constructing a mapping between them.
 
-class attribute:
-    An attribute associated with a class object. Class attributes are
-    defined inside a class definition but outside any method.
-
-instance attribute:
-    An attribute associated with an instance of a class.
-
-veneer:
-    A method or function that provides a different interface to another
-    function without doing much computation.
-
-inheritance:
-    The ability to define a new class that is a modified version of a
-    previously defined class.
-
-parent class:
-    The class from which a child class inherits.
-
-child class:
-    A new class created by inheriting from an existing class; also
-    called a “subclass”.
-
-IS-A relationship:
-    A relationship between a child class and its parent class.
-
-HAS-A relationship:
-    A relationship between two classes where instances of one class
-    contain references to instances of the other.
-
-dependency:
-    A relationship between two classes where instances of one class use
-    instances of the other class, but do not store them as attributes.
-
-class diagram:
-    A diagram that shows the classes in a program and the relationships
-    between them.
-
-multiplicity:
-    A notation in a class diagram that shows, for a HAS-A relationship,
-    how many references there are to instances of another class.
-
-data encapsulation:
-    A program development plan that involves a prototype using global
-    variables and a final version that makes the global variables into
-    instance attributes.
-
-Exercises
+调试
 ---------
 
-For the following program, draw a UML class diagram that shows these
-classes and the relationships among them.
+继承会使得调试变得更加复杂，因为你可能不知道实际调用的是哪个类的方法。
+
+假设你在写一个处理 ``Hand`` 对象的函数。你可能会想让它可以处理所有种类的 ``Hand`` ，如 ``PockerHands`` ，``BridgeHands`` ，等等。如果你调用类似 ``shuffle`` 这样的方法，你可能会得到 ``Deck`` 中定义的那个，
+但是如果有任何一个子类覆盖了这个方法。你实际上得到的是子类的那个方法。这个行为通常是一件好事，但是容易让人混淆。
+
+只要你不确定程序的执行流程，最简单的方法是在相关方法的开始处添加 ``print`` 语
+句。如果 ``Deck.shuffle`` 打印一条如像 ``Running Deck.shuffle`` 的消息，那么随着程序的运行，它会追踪执行的流程。
+
+另外一种方法是使用下面的函数，它接受一个对象和一个方法的名字（字符串格式）作
+为参数，然后返回提供这个方法定义的类：
+
+::
+
+    def find_defining_class(obj, meth_name):
+        for ty in type(obj).mro():
+            if meth_name in ty.__dict__:
+                return ty
+
+例如：
+
+::
+
+    >>> hand = Hand()
+    >>> find_defining_class(hand, 'shuffle')
+    <class 'Card.Deck'>
+
+所以 ``Hand`` 的 ``shuffle`` 方法是来自于 ``Deck`` 的。
+
+\ ``find_defining_class``\ 使用 ``mro`` 方法获得将类对象（类型）的列表，
+解释器将会从这里依次搜索哪个类提供了这个方法。“MOR”是“method resolution order”的简称，指的是Python “解析” 方法名时将搜索的一个类序列。
+
+我提一个对程序设计的建议：当你覆盖一个方法时，新方法的接口应该与旧方法保持一致。
+它们应该接受相同的参数，返回相同的类型，遵守相同的先决条件和后置条件。
+如果你遵循这个原则，你会发现：任何你设计的函数，只要能用于一个父类的对象（
+如 ``Deck`` ），就能够用于任何子类的实例（如 ``Hand`` 和 ``PockerHand`` ）。
+
+如果你违背这条规则（该原则被称为“里氏代换原理”，英文为：Liskov substitution
+principle），你的代码逻辑就会变得乱七八糟。
+
+术语表
+--------
+
+编码（encode）：
+
+    利用另一组值代表一组值，方法时构建二者之间的映射。
+
+类属性（class attribute）：
+
+    与类对象相关联的属性。类属性定义在类定义的内部，但在方法的外部。
+
+实例属性（instance attribute）：
+
+    与类的实例相关联的属性。
+
+伪装方法（veneer）：
+    
+    提供另一个函数的不同接口，但不做太多计算的函数或方法。
+
+继承（inheritance）：
+
+    在此前定义的类的基础下进行修改，从而定义一个新类的能力。
+
+父类（parent class）：
+
+    子类所继承自的类。
+
+子类（child class）：
+
+    通过继承一个现有类创建的新类。
+
+IS-A 关系：
+
+    子类和父类之间的关系。
+
+HAS-A 关系：
+
+    两个类之中，有一个类包含对另一个类的实例的引用的关系。
+
+依赖（dependency）：
+
+    两个类之中，一个类的实例使用了另一个类的实例，但没有将其保存为属性的关系。
+
+类图（class diagram）：
+
+    表明程序中包含的类及其之间的关系的图示。
+
+复数（multiplicity）：
+
+    类图中的一种标记，表明在 HAS-A 关系中，某个对包含了多少个对另一个类实例的引用。
+
+数据封装（data encapsulation）：
+
+    一种程序开发计划，包括首先编写一个使用全局变量的原型，然后再讲全局变量变成实例属性的最终版代码。
+
+
+练习题
+---------
+
+习题18-1
+^^^^^^^^^^^^
+
+针对以下程序，画一个 UML 类图，说明其中包含的类及其之间的关系。
 
 ::
 
@@ -694,79 +574,82 @@ classes and the relationships among them.
     ping = Ping(pong)
     pong.add_ping(ping)
 
-Write a Deck method called ``deal_hands`` that takes two parameters, the
-number of hands and the number of cards per hand. It should create the
-appropriate number of Hand objects, deal the appropriate number of cards
-per hand, and return a list of Hands.
 
-[poker]
+习题18-2
+^^^^^^^^^^^^
 
-The following are the possible hands in poker, in increasing order of
-value and decreasing order of probability:
+为 ``Deck`` 编写一个叫 ``deal_hands`` 的方法，接受两个参数：手牌的数量以及每个手牌的卡牌数。它应该创建相应数量的 ``Hand`` 对象，给每个手牌发放相应数量的卡牌，然后返回一个 ``Hands`` 列表。
 
-pair:
-    two cards with the same rank
+下面是扑克牌中可能的手牌（牌型），越往下值越大，几率越低：
 
-two pair:
-    two pairs of cards with the same rank
+对牌：
+    
+    两张相同牌面的牌
 
-three of a kind:
-    three cards with the same rank
+两对牌：
 
-straight:
-    five cards with ranks in sequence (aces can be high or low, so
-    Ace-2-3-4-5 is a straight and so is 10-Jack-Queen-King-Ace, but
-    Queen-King-Ace-2-3 is not.)
+    两对相同牌面的牌
 
-flush:
-    five cards with the same suit
+三条：
 
-full house:
-    three cards with one rank, two cards with another
+    三张等级相同的牌
 
-four of a kind:
-    four cards with the same rank
+顺子：
 
-straight flush:
-    five cards in sequence (as defined above) and with the same suit
+    五张连续的牌（A可高可低。如A-2-3-4-5是一个顺子,10-J-Q-K-A也
+    是。但是Q-K-A-2-3就不是）
 
-The goal of these exercises is to estimate the probability of drawing
-these various hands.
+同花：
 
-#. Download the following files from http://thinkpython2.com/code:
+    五张花色一样的牌
+
+三代二：
+
+    三张等级一样的牌，另外两张等级一样的牌
+
+四条：
+
+    四张牌面一样的牌
+
+同花顺：
+    
+    五张花色相同的等级连续的牌
+
+.. _poker:
+
+习题18-3
+^^^^^^^^^^^^
+
+下面这些习题的目的，是估算抽到不同手牌的几率。
+
+
+#. 从\ http://thinkpython2.com/code \ 页面下载以下文件：
 
    Card.py
-       : A complete version of the Card, Deck and Hand classes in this
-       chapter.
+       : 本章中完整版本的Card , Deck和Hand类。
 
    PokerHand.py
-       : An incomplete implementation of a class that represents a poker
-       hand, and some code that tests it.
+       : 代表 poker hand 的不完整的实现，和一些测试代码。
 
-#. If you run PokerHand.py, it deals seven 7-card poker hands and checks
-   to see if any of them contains a flush. Read this code carefully
-   before you go on.
+#. 如果你运行 ``PokerHand.py`` ,它会发放 7 张牌的 poker hand，检查是否含有顺子。仔细阅读代码，再继续下面的内容。
 
-#. Add methods to PokerHand.py named ``has_pair``, ``has_twopair``, etc.
-   that return True or False according to whether or not the hand meets
-   the relevant criteria. Your code should work correctly for “hands”
-   that contain any number of cards (although 5 and 7 are the most
-   common sizes).
+#. 往 ``PokerHand.py`` 文件中添加叫做 ``has_pair`` 、 ``has_twopair`` 等方法，这些方法根据手牌是否满足相应的标准来返回 ``True`` 或 ``False`` 。你的代码应该可以正确地处理包含任意卡牌数量（虽然 5 和 7 是最常见的数量）的手牌。
 
-#. Write a method named classify that figures out the highest-value
-   classification for a hand and sets the label attribute accordingly.
-   For example, a 7-card hand might contain a flush and a pair; it
-   should be labeled “flush”.
+#. 写一个叫 ``classify`` 的方法，计算出一个手牌的最高值分类，然后设置对应的 ``label`` 属性。例如，一个 7 张牌的手牌可能包含一个顺子和一个对子；那么它应该标注为“顺子”。
 
-#. When you are convinced that your classification methods are working,
-   the next step is to estimate the probabilities of the various hands.
-   Write a function in PokerHand.py that shuffles a deck of cards,
-   divides it into hands, classifies the hands, and counts the number of
-   times various classifications appear.
+#. 确信你的分类方法是正确的之后，下一步是估算这些不同手牌出现的几率。在 ``PokerHand.py`` 中编写一个函数，完成洗牌，分牌，对牌分类，然后记录每种分类出现的次数。
 
-#. Print a table of the classifications and their probabilities. Run
-   your program with larger and larger numbers of hands until the output
-   values converge to a reasonable degree of accuracy. Compare your
-   results to the values at http://en.wikipedia.org/wiki/Hand_rankings.
+#. 打印每种分类和对应频率的表格。运行你的程序，不断增加手牌的卡牌数量，直到输出的值保持在足够准确的范围。将你的结果和\ http://en.wikipedia.org/wiki/Hand_rankings \ 页面中的的值进行比较。
 
-Solution: http://thinkpython2.com/code/PokerHandSoln.py.
+答案： http://thinkpython2.com/code/PokerHandSoln.py 。
+
+**贡献者**
+^^^^^^^^^^^
+
+#. 翻译：`@bingjin`_
+#. 校对：`@bingjin`_
+#. 参考：`@carfly`_
+
+.. _@bingjin: https://github.com/bingjin
+.. _@bingjin: https://github.com/bingjin
+.. _@carfly: https://github.com/carfly
